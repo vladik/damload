@@ -1,5 +1,6 @@
 using DamLoad.Web.Components;
 using Radzen;
+using DamLoad.Assets;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddRadzenComponents();
+builder.Services.AddDamLoadAssets();
 
 var app = builder.Build();
 

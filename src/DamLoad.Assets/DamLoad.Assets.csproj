@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -6,12 +6,23 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+
   <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.2" />
     <PackageReference Include="Radzen.Blazor" Version="6.2.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DamLoad.Assets\DamLoad.Assets.csproj" />
+    <Folder Include="Services\" />
+    <Folder Include="Repositories\" />
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\DamLoad.Core\DamLoad.Core.csproj" />
   </ItemGroup>
 

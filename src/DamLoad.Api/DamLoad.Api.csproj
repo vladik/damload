@@ -7,11 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Radzen.Blazor" Version="6.2.4" />
+    <PackageReference Include="FastEndpoints" Version="5.35.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DamLoad.Assets\DamLoad.Assets.csproj" />
     <ProjectReference Include="..\DamLoad.Core\DamLoad.Core.csproj" />
   </ItemGroup>
 
