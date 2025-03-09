@@ -1,0 +1,98 @@
+﻿@page "/assets/{id:guid}"
+
+@inject NavigationManager NavigationManager
+@inject DialogService DialogService
+
+<PageTitle>@CurrentPageTitle</PageTitle>
+
+<RadzenStack>
+    <RadzenRow>
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Normal" JustifyContent="JustifyContent.Start" Gap="4">
+                <RadzenIcon Icon="developer_board"></RadzenIcon>
+                <RadzenText TextStyle="TextStyle.H5" TagName="TagName.H1" class="rz-m-0">@CurrentPageTitle</RadzenText>
+            </RadzenStack>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="3">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="1rem" Wrap="FlexWrap.Wrap">
+            </RadzenStack>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="3">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="1rem" Wrap="FlexWrap.Wrap">
+                <RadzenProgressBarCircular Visible="@_isSaving" ProgressBarStyle="ProgressBarStyle.Primary" Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.ExtraSmall" />
+                <RadzenButton form="formCurrentMigration" ButtonType="ButtonType.Submit" Icon="save" Text="Save" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" Disabled="@_isSaving" />
+                <RadzenButton Icon="cancel" Text="Close" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" Click="@OnCloseAsync" />
+                <RadzenButton Icon="delete" Text="Delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" Click="@OnDeleteAsync" Disabled="@_isSaving" />
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+
+    <RadzenRow>
+        <RadzenColumn Size="12">
+            
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>
+
+@code {
+    private bool _isSaving = false;
+
+    [Parameter] public Guid Id { get; set; }
+
+    private string CurrentPageTitle => "Unnamed Migration";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await OnLoadAsync();
+       
+    }
+
+    private async Task OnLoadAsync()
+    {
+        await ShowSavingIndicatorAsync(true);
+    }
+
+    async Task OnSaveAsync()
+    {
+        await ShowSavingIndicatorAsync(true);
+
+    }
+
+    async Task OnCloseAsync() => await NavigateToAsync();
+
+    async Task OnDeleteAsync()
+    {
+        await NavigateToAsync($"/assets");
+    }
+
+    async Task OnAddAsync()
+    {
+        await NavigateToAsync($"/assets");
+    }
+
+    async Task OnEditAsync(Guid id)
+    {
+        await NavigateToAsync($"/assets/edit/{id}");
+    }
+
+    async Task OnDeleteAsync(Guid id)
+    {
+
+        StateHasChanged();
+        await NavigateToAsync($"/assets/edit/{id}");
+    }
+
+    async Task NavigateToAsync(string? route = null)
+    {
+        NavigationManager.NavigateTo(route ?? "/");
+        await Task.CompletedTask;
+    }
+
+    async Task ShowSavingIndicatorAsync(bool isSaving)
+    {
+        _isSaving = isSaving;
+        StateHasChanged();
+        if (isSaving)
+            await Task.Delay(500);
+    }
+}
