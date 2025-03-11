@@ -11,4 +11,8 @@
     <Folder Include="Storage\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DamLoad.Core\DamLoad.Core.csproj" />
+  </ItemGroup>
+
 </Project>

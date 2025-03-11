@@ -13,17 +13,18 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.2" />
     <PackageReference Include="Radzen.Blazor" Version="6.2.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
-    <Folder Include="Repositories\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DamLoad.Core\DamLoad.Core.csproj" />
+    <ProjectReference Include="..\DamLoad.Data\DamLoad.Data.csproj" />
+    <ProjectReference Include="..\DamLoad.Search\DamLoad.Search.csproj" />
   </ItemGroup>
 
 </Project>
