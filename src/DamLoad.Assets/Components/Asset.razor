@@ -1,0 +1,11 @@
+﻿<h3>Asset</h3>
+<p>@currentCount</p>
+<RadzenButton Click="@ButtonClicked" Text="Hi"></RadzenButton>
+@code {
+    private int currentCount = 0;
+    void ButtonClicked()
+    {
+    currentCount++;
+    }
+}
+

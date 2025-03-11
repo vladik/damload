@@ -1,0 +1,72 @@
+﻿@using System.IO
+@inject ContextMenuService ContextMenuService
+<RadzenStack Gap="1rem" class="rz-p-4 rz-h-auto">
+    <RadzenTextBox AutoCompleteType="AutoCompleteType.Off" placeholder="Find component ..." type="search"
+                   @oninput="@Filter" style="width:100%" class="rz-search-input" aria-label="find" />
+
+    <RadzenTree Data=@entries Expand=@LoadFiles ItemContextMenu="ItemContextMenu" class="rz-w-100">
+        <RadzenTreeLevel Text=@GetTextForNode Template=@FileOrFolderTemplate />
+    </RadzenTree>
+</RadzenStack>
+
+@code {
+
+    IEnumerable<string> entries;
+    protected override void OnInitialized()
+    {
+        entries = Directory.GetDirectories(Directory.GetCurrentDirectory())
+                           .Where(entry =>
+                           {
+                               var name = Path.GetFileName(entry);
+
+                               return !name.StartsWith(".") && name != "bin" && name != "obj";
+                           });
+
+    }
+
+    void LoadFiles(TreeExpandEventArgs args)
+    {
+        var directory = args.Value as string;
+
+        args.Children.Data = Directory.EnumerateFileSystemEntries(directory);
+        args.Children.Text = GetTextForNode;
+        args.Children.HasChildren = (path) => Directory.Exists((string)path);
+        args.Children.Template = FileOrFolderTemplate;
+        args.Children.Checkable = o => false;
+    }
+
+    string GetTextForNode(object data)
+    {
+        return Path.GetFileName((string)data);
+    }
+    void ItemContextMenu(TreeItemContextMenuEventArgs args)
+    {
+        ContextMenuService.Open(args,
+            new List<ContextMenuItem> {
+                new ContextMenuItem(){ Text = "Context menu item 1", Value = 1, Icon = "home" },
+                new ContextMenuItem(){ Text = "Context menu item 2", Value = 2, Icon = "search" },
+                new ContextMenuItem(){ Text = "Context menu item 3", Value = 3, Icon = "info" },
+                    },
+            (e) =>
+            {
+                
+            }
+         );
+    }
+    RenderFragment<RadzenTreeItem> FileOrFolderTemplate = (context) => builder =>
+    {
+        string path = context.Value as string;
+        bool isDirectory = Directory.Exists(path);
+
+        builder.OpenComponent<RadzenIcon>(0);
+        builder.AddAttribute(1, nameof(RadzenIcon.Icon), isDirectory ? "folder" : "insert_drive_file");
+        builder.CloseComponent();
+        builder.AddContent(3, context.Text);
+    };
+
+    void Filter(ChangeEventArgs args)
+    {
+        var term = $"{args.Value}";
+
+    }
+}
