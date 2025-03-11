@@ -1,12 +1,17 @@
 using DamLoad.Web.Components;
 using Radzen;
 using DamLoad.Assets;
+using DamLoad.Data.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+builder.Services.AddSingleton(new DatabaseFactory(connectionString));
 
 builder.Services.AddRadzenComponents();
 builder.Services.AddDamLoadAssets();
