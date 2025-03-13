@@ -1,0 +1,4 @@
+﻿namespace DamLoad.Core
+{
+
+}

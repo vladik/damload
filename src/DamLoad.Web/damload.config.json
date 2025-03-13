@@ -1,0 +1,38 @@
+{
+  "Localization": {
+    "Locales": [ "en", "fr", "de" ],
+    "LocaleFallback": true
+  },
+  "CustomDataFields": {
+    "Image": [
+      {
+        "name": "photographer",
+        "isRequired": false
+      },
+      {
+        "name": "resolution",
+        "isRequired": true
+      }
+    ],
+    "Video": [
+      {
+        "name": "director",
+        "isRequired": false
+      },
+      {
+        "name": "duration",
+        "isRequired": true
+      }
+    ],
+    "Raw": [
+      {
+        "name": "author",
+        "isRequired": false
+      },
+      {
+        "name": "format",
+        "isRequired": false
+      }
+    ]
+  }
+}

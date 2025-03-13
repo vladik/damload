@@ -1,4 +1,5 @@
 ﻿using DamLoad.Core.Base.Entities;
+using DamLoad.Core.Enums;
 
 namespace DamLoad.Assets.Entities
 {
@@ -22,18 +23,5 @@ namespace DamLoad.Assets.Entities
         public List<Guid> TagIds { get; set; } = new();
         public List<Guid> MetadataIds { get; set; } = new();
         public List<Guid> CustomDataIds { get; set; } = new();
-    }
-    public enum AssetType
-    {
-        Image,
-        Video,
-        Raw
-    }
-
-    public enum AssetStatus
-    {
-        Draft,
-        Published,
-        Archived
     }
 }
