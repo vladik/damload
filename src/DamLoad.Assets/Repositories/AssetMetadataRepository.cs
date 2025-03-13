@@ -19,14 +19,21 @@ namespace DamLoad.Assets.Repositories
         public async Task<List<AssetMetadataEntity>> GetByAssetIdAsync(Guid assetId)
         {
             using var db = GetConnection();
-            string sql = "SELECT * FROM asset_metadata WHERE asset_id = @AssetId";
+            string sql = "SELECT id FROM asset_metadata WHERE asset_id = @AssetId WHERE asset_id = @AssetId";
             return (await db.QueryAsync<AssetMetadataEntity>(sql, new { AssetId = assetId })).ToList();
+        }
+
+        public async Task<List<AssetMetadataEntity>> GetByAssetIdAndLocaleAsync(Guid assetId, string locale)
+        {
+            using var db = GetConnection();
+            string sql = "SELECT * FROM asset_metadata WHERE asset_id = @AssetId AND locale = @Locale";
+            return (await db.QueryAsync<AssetMetadataEntity>(sql, new { AssetId = assetId, Locale = locale })).AsList();
         }
 
         public async Task AddAsync(AssetMetadataEntity metadata)
         {
             using var db = GetConnection();
-            string sql = "INSERT INTO asset_metadata (id, asset_id, meta_key, meta_value) VALUES (@Id, @AssetId, @MetaKey, @MetaValue)";
+            string sql = "INSERT INTO asset_metadata (id, asset_id, data_key, data_value) VALUES (@Id, @AssetId, @DataKey, @DataValue)";
             await db.ExecuteAsync(sql, metadata);
         }
 
@@ -35,7 +42,7 @@ namespace DamLoad.Assets.Repositories
             if (metadataList == null || !metadataList.Any()) return; 
 
             using var db = GetConnection();
-            string sql = "INSERT INTO asset_metadata (id, asset_id, meta_key, meta_value) VALUES (@Id, @AssetId, @MetaKey, @MetaValue)";
+            string sql = "INSERT INTO asset_metadata (id, asset_id, data_key, data_value) VALUES (@Id, @AssetId, @DataKey, @DataValue)";
 
             await db.ExecuteAsync(sql, metadataList);
         }

@@ -29,8 +29,8 @@ namespace DamLoad.Assets
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<IAssetMetadataRepository, AssetMetadataRepository>();
             services.AddScoped<IAssetMetadataService, AssetMetadataService>();
-            services.AddScoped<ILocaleRepository, LocaleRepository>();
-            services.AddScoped<ILocaleService, LocaleService>();
+            services.AddScoped<IAssetCustomDataRepository, AssetCustomDataRepository>();
+            services.AddScoped<IAssetCustomDataService, AssetCustomDataService>();
             return services;
         }
     }

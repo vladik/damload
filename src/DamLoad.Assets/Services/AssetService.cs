@@ -8,23 +8,35 @@ namespace DamLoad.Assets.Services
     {
         private readonly IAssetRepository _repository;
         private readonly IFolderRepository _folderRepository;
+        private readonly IAssetMetadataRepository _metadataRepository;
+        private readonly IAssetCustomDataRepository _customDataRepository;
         private readonly ISoftDeleteRepository<AssetEntity> _softDeleteRepository;
         private readonly ISortableRepository<AssetEntity> _sortableRepository;
 
         public AssetService(
             IAssetRepository repository,
             IFolderRepository folderRepository,
+            IAssetMetadataRepository metadataRepository,
+            IAssetCustomDataRepository customDataRepository,
             ISoftDeleteRepository<AssetEntity> softDeleteRepository,
             ISortableRepository<AssetEntity> sortableRepository)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
             _folderRepository = folderRepository ?? throw new ArgumentNullException(nameof(folderRepository));
+            _metadataRepository = metadataRepository ?? throw new ArgumentNullException(nameof(metadataRepository));
+            _customDataRepository = customDataRepository ?? throw new ArgumentNullException(nameof(customDataRepository));
             _softDeleteRepository = softDeleteRepository ?? throw new ArgumentNullException(nameof(softDeleteRepository));
             _sortableRepository = sortableRepository ?? throw new ArgumentNullException(nameof(sortableRepository));
         }
 
         public async Task<AssetEntity?> GetByIdAsync(Guid id, bool includeDeleted = false) =>
             await _repository.GetByIdAsync(id, includeDeleted);
+
+        public async Task<List<AssetMetadataEntity>> GetMetadataByLocaleAsync(Guid assetId, string locale) =>
+            await _metadataRepository.GetByAssetIdAndLocaleAsync(assetId, locale);
+
+        public async Task<List<AssetCustomDataEntity>> GetCustomDataByLocaleAsync(Guid assetId, string locale) =>
+            await _customDataRepository.GetByAssetIdAndLocaleAsync(assetId, locale);
 
         public async Task<List<AssetEntity>> GetAllAsync(bool includeDeleted = false) =>
             await _repository.GetAllAsync(includeDeleted);
@@ -76,5 +88,17 @@ namespace DamLoad.Assets.Services
 
         public async Task<List<AssetEntity>> GetRootAssetsAsync() =>
             await _repository.GetAssetsByFolder(null);
+
+        public async Task<List<Guid>> GetMetadataIdsAsync(Guid assetId) =>
+            await _repository.GetMetadataIdsAsync(assetId);
+
+        public async Task<List<Guid>> GetCustomDataIdsAsync(Guid assetId) =>
+            await _repository.GetCustomDataIdsAsync(assetId);
+
+        public async Task<List<Guid>> GetCollectionIdsAsync(Guid assetId) =>
+            await _repository.GetCollectionIdsAsync(assetId);
+
+        public async Task<List<Guid>> GetTagIdsAsync(Guid assetId) =>
+            await _repository.GetTagIdsAsync(assetId);
     }
 }

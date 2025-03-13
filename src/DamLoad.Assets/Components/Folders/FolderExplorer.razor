@@ -59,7 +59,7 @@
     /// ✅ **Load Folders and Restore State**
     async Task LoadFolders()
     {
-        var allFolders = await FolderService.GetAllFoldersAsync();
+        var allFolders = await FolderService.GetAllAsync();
         folderTree = BuildFolderTree(allFolders);
         ExpandStoredFolders(folderTree); // ✅ Ensure expanded folders apply
         StateHasChanged();

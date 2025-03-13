@@ -15,7 +15,7 @@ public class AssetSearchService : SearchService<AssetEntity>
         var doc = new Document
         {
             new StringField("id", asset.Id.ToString(), Field.Store.YES),
-            new TextField("name", asset.Name, Field.Store.YES),
+            //new TextField("name", asset.Name, Field.Store.YES),
         };
 
         _writer.UpdateDocument(new Term("id", asset.Id.ToString()), doc);
@@ -37,7 +37,7 @@ public class AssetSearchService : SearchService<AssetEntity>
             return new AssetEntity
             {
                 Id = Guid.Parse(doc.Get("id")),
-                Name = doc.Get("name"),
+                //Name = doc.Get("name"),
             };
         }).ToList();
 

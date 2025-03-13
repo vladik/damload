@@ -4,7 +4,7 @@ namespace DamLoad.Assets.Repositories;
 public interface IFolderRepository
 {
     Task<List<FolderEntity>> GetAllAsync();
-    Task<List<FolderEntity>> GetRootFoldersAsync();
+    Task<FolderEntity?> GetRootFolderAsync();
     Task<FolderEntity?> GetFolderByIdAsync(Guid folderId);
     Task<bool> FolderExistsAsync(Guid folderId);
     Task AddFolderAsync(FolderEntity folder);

@@ -12,13 +12,13 @@ namespace DamLoad.Assets.Services
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        public async Task<List<FolderEntity>> GetAllFoldersAsync()
+        public async Task<List<FolderEntity>> GetAllAsync()
         {
             return await _repository.GetAllAsync();
         }
 
-        public async Task<List<FolderEntity>> GetRootFoldersAsync() =>
-            await _repository.GetRootFoldersAsync();
+        public async Task<FolderEntity?> GetRootFolderAsync() =>
+            await _repository.GetRootFolderAsync();
 
         public async Task<FolderEntity?> GetFolderByIdAsync(Guid folderId)
         {

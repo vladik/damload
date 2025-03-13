@@ -2,7 +2,7 @@
 
 namespace DamLoad.Assets.Entities
 {
-    public class AssetMetadataEntity : IBaseEntity
+    public class AssetCustomDataEntity : IBaseEntity
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public Guid AssetId { get; set; }

@@ -23,11 +23,11 @@ namespace DamLoad.Assets.Repositories
             return (await db.QueryAsync<FolderEntity>(sql)).AsList();
         }
 
-        public async Task<List<FolderEntity>> GetRootFoldersAsync()
+        public async Task<FolderEntity?> GetRootFolderAsync()
         {
             using var db = GetConnection();
-            string sql = "SELECT * FROM folders WHERE parent_id IS NULL ORDER BY name ASC";
-            return (await db.QueryAsync<FolderEntity>(sql)).ToList();
+            string sql = "SELECT * FROM folders WHERE parent_id IS NULL LIMIT 1";
+            return await db.QueryFirstOrDefaultAsync<FolderEntity>(sql);
         }
 
         public async Task<FolderEntity?> GetFolderByIdAsync(Guid folderId)
@@ -59,21 +59,12 @@ namespace DamLoad.Assets.Repositories
             await db.ExecuteAsync(sql, new { FolderId = folderId, NewName = newName });
         }
 
-        public async Task<bool> CanDeleteFolderAsync(Guid folderId)
-        {
-            using var db = GetConnection();
-            string sql = "SELECT COUNT(*) FROM assets WHERE folder_id = @FolderId";
-            int assetCount = await db.ExecuteScalarAsync<int>(sql, new { FolderId = folderId });
-
-            return assetCount == 0;
-        }
-
         public async Task DeleteFolderAsync(Guid folderId)
         {
             using var db = GetConnection();
 
             string deleteSubfoldersSql = @"
-                WITH Subfolders AS (
+                WITH RECURSIVE Subfolders AS (
                     SELECT id FROM folders WHERE parent_id = @FolderId
                     UNION ALL
                     SELECT f.id FROM folders f
