@@ -19,6 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Components\Collections\" />
+    <Folder Include="Components\Search\" />
+    <Folder Include="Components\Tags\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

@@ -2,6 +2,7 @@ using DamLoad.Web.Components;
 using Radzen;
 using DamLoad.Assets;
 using DamLoad.Data.Database;
+using DamLoad.Data.Local;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,8 @@ builder.Services.AddSingleton(new DatabaseFactory(connectionString));
 
 builder.Services.AddRadzenComponents();
 builder.Services.AddDamLoadAssets();
+
+builder.Services.AddScoped<LocalStorageService>();
 
 var app = builder.Build();
 

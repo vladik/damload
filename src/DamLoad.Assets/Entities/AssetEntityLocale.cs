@@ -1,6 +1,8 @@
-﻿namespace DamLoad.Assets.Entities
+﻿using DamLoad.Core.Base.Entities;
+
+namespace DamLoad.Assets.Entities
 {
-    public class AssetEntityLocale
+    public class AssetEntityLocale : IBaseEntity
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public Guid AssetId { get; set; }

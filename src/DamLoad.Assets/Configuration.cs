@@ -21,6 +21,16 @@ namespace DamLoad.Assets
             services.AddScoped<ISortableService<AssetEntity>, AssetService>();
             services.AddScoped<IAssetService, AssetService>();
             services.AddScoped<IAssetContract, AssetContract>();
+            services.AddScoped<IFolderRepository, FolderRepository>();
+            services.AddScoped<IFolderService, FolderService>();
+            services.AddScoped<ICollectionRepository, CollectionRepository>();
+            services.AddScoped<ICollectionService, CollectionService>();
+            services.AddScoped<ITagRepository, TagRepository>();
+            services.AddScoped<ITagService, TagService>();
+            services.AddScoped<IAssetMetadataRepository, AssetMetadataRepository>();
+            services.AddScoped<IAssetMetadataService, AssetMetadataService>();
+            services.AddScoped<ILocaleRepository, LocaleRepository>();
+            services.AddScoped<ILocaleService, LocaleService>();
             return services;
         }
     }
