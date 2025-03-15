@@ -8,6 +8,7 @@ namespace DamLoad.Core.Contracts.Models
 {
     public class AssetModel
     {
+        public Guid Id { get; set; }
         public string Name { get; set; } = "";
     }
 }

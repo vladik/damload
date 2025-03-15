@@ -1,0 +1,212 @@
+﻿@inject IFolderService FolderService
+@inject DialogService DialogService
+@inject ContextMenuService ContextMenuService
+@inject IJSRuntime JSRuntime
+
+<RadzenTree Data="@folderTree"
+            Expand="@OnExpand" Collapse="@OnCollapse"
+            ItemContextMenu="ShowContextMenu">
+    <RadzenTreeLevel TextProperty="Name" ChildrenProperty="Children"
+                     HasChildren="@(node => ((FolderTreeNode)node).Children.Any())" />
+</RadzenTree>
+
+@code {
+
+    private bool _initialized = false;
+
+    private class FolderTreeNode
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public Guid? ParentId { get; set; }
+        public List<FolderTreeNode> Children { get; set; } = new();
+    }
+
+    private string folderName = string.Empty;
+    private List<FolderTreeNode> folderTree = new();
+    private HashSet<Guid> expandedFolders = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_initialized)
+        {
+            await LoadExpandedFolders(); // ✅ Load expanded folders **before** loading data
+            await LoadFolders();
+            ExpandStoredFolders(folderTree); // ✅ Apply stored expand state
+            _initialized = true;
+            StateHasChanged(); // ✅ Re-render with stored state
+        }
+    }
+
+    /// ✅ **Load Expanded Folders from LocalStorage**
+    async Task LoadExpandedFolders()
+    {
+        try
+        {
+            var storedData = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "ExpandedFolders");
+
+            if (!string.IsNullOrEmpty(storedData) && storedData != "null")
+            {
+                expandedFolders = System.Text.Json.JsonSerializer.Deserialize<HashSet<Guid>>(storedData) ?? new HashSet<Guid>();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading expanded folders: {ex.Message}");
+        }
+    }
+
+    /// ✅ **Load Folders and Restore State**
+    async Task LoadFolders()
+    {
+        var allFolders = await FolderService.GetAllAsync();
+        folderTree = BuildFolderTree(allFolders);
+        ExpandStoredFolders(folderTree); // ✅ Ensure expanded folders apply
+        StateHasChanged();
+    }
+
+    /// ✅ **Build Folder Hierarchy**
+    List<FolderTreeNode> BuildFolderTree(List<FolderEntity> allFolders)
+    {
+        var lookup = allFolders.ToDictionary(f => f.Id, f => new FolderTreeNode
+                {
+                    Id = f.Id,
+                    Name = f.Name,
+                    ParentId = f.ParentId,
+                    Children = new List<FolderTreeNode>()
+                });
+
+        foreach (var folder in lookup.Values)
+        {
+            if (folder.ParentId.HasValue && lookup.ContainsKey(folder.ParentId.Value))
+            {
+                lookup[folder.ParentId.Value].Children.Add(folder);
+            }
+        }
+
+        return lookup.Values.Where(f => f.ParentId == null).ToList();
+    }
+
+    /// ✅ **Ensure Previously Expanded Folders are Expanded**
+    void ExpandStoredFolders(List<FolderTreeNode> nodes)
+    {
+        foreach (var node in nodes)
+        {
+            if (expandedFolders.Contains(node.Id))
+            {
+                node.Children = node.Children; // ✅ This ensures it's expanded
+            }
+            ExpandStoredFolders(node.Children); // ✅ Recursively apply expansion state
+        }
+    }
+
+    /// ✅ **Save Expanded Folders to LocalStorage**
+    async Task SaveExpandedFolders()
+    {
+        try
+        {
+            var json = System.Text.Json.JsonSerializer.Serialize(expandedFolders.ToList());
+            await JSRuntime.InvokeVoidAsync("localStorage.setItem", "ExpandedFolders", json);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving expanded folders: {ex.Message}");
+        }
+    }
+
+    /// ✅ **Handle Folder Expand**
+    async Task OnExpand(TreeExpandEventArgs args)
+    {
+        var folder = (FolderTreeNode)args.Value;
+
+        if (!expandedFolders.Contains(folder.Id))
+        {
+            expandedFolders.Add(folder.Id);
+            await SaveExpandedFolders();
+        }
+    }
+
+    /// ✅ **Handle Folder Collapse**
+    async Task OnCollapse(TreeEventArgs args)
+    {
+        var folder = (FolderTreeNode)args.Value;
+
+        if (expandedFolders.Contains(folder.Id))
+        {
+            expandedFolders.Remove(folder.Id);
+            await SaveExpandedFolders();
+        }
+    }
+
+    /// ✅ **Context Menu Handling**
+    void ShowContextMenu(TreeItemContextMenuEventArgs args)
+    {
+        var folder = args.Value as FolderTreeNode;
+        if (folder == null) return;
+
+        ContextMenuService.Open(args,
+    new List<ContextMenuItem>
+            {
+            new ContextMenuItem { Text = "Add Subfolder", Value = "add", Icon = "add" },
+            new ContextMenuItem { Text = "Rename", Value = "rename", Icon = "edit" }
+            }.Concat(folder.ParentId != null
+        ? new List<ContextMenuItem> { new ContextMenuItem { Text = "Delete", Value = "delete", Icon = "delete" } }
+        : new List<ContextMenuItem>()).ToList(),
+    async (e) =>
+    {
+        if (e.Value.ToString() == "add")
+        {
+            await ShowFolderDialog(null, "", folder.Id);
+        }
+        else if (e.Value.ToString() == "rename")
+        {
+            await ShowFolderDialog(folder.Id, folder.Name);
+        }
+        else if (e.Value.ToString() == "delete")
+        {
+            bool confirm = (await DialogService.Confirm("Are you sure you want to delete this folder?", "Confirm Delete")).GetValueOrDefault();
+            if (confirm)
+            {
+                await FolderService.DeleteFolderAsync(folder.Id);
+                expandedFolders.Remove(folder.Id);
+                await SaveExpandedFolders();
+                await LoadFolders();
+            }
+        }
+    });
+    }
+
+    /// ✅ **Folder Dialog Handling**
+    async Task ShowFolderDialog(Guid? folderId, string name = "", Guid? parentFolderId = null)
+    {
+        await DialogService.OpenAsync("Folder", ds =>
+    @<RadzenStack Gap="1.5rem">
+        <RadzenTextBox @bind-Value="folderName" Placeholder="Folder name..." Class="mb-2 w-full" />
+        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End">
+            <RadzenButton Text="Save" Click="async () => await SaveFolder(ds, folderId, parentFolderId)" Style="margin-right:10px;" />
+            <RadzenButton Text="Cancel" Click="() => ds.Close()" ButtonStyle="ButtonStyle.Secondary" />
+        </RadzenStack>
+    </RadzenStack>);
+    }
+
+    /// ✅ **Save Folder (New / Rename)**
+    private async Task SaveFolder(DialogService ds, Guid? folderId, Guid? parentFolderId)
+    {
+        if (!string.IsNullOrWhiteSpace(folderName))
+        {
+            if (folderId.HasValue)
+            {
+                await FolderService.RenameFolderAsync(folderId.Value, folderName);
+            }
+            else
+            {
+                var newFolder = new FolderEntity { Name = folderName, ParentId = parentFolderId };
+                await FolderService.AddFolderAsync(newFolder);
+            }
+
+            await LoadFolders();
+        }
+
+        ds.Close();
+    }
+}

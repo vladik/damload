@@ -1,0 +1,68 @@
+{
+  "Localization": {
+    "Locales": [ "en", "fr", "de" ],
+    "LocaleFallback": true
+  },
+  "Variants": {
+    "Enabled": true,
+    "CreateVariantsOnUpload": [
+      {
+        "Name": "thumb_small",
+        "Width": 100,
+        "Height": 100,
+        "Format": "webp",
+        "Quality": 75,
+        "Transformation": "crop",
+        "Provider": "ImageSharp"
+      },
+      {
+        "Name": "web_standard",
+        "Width": 1280,
+        "Height": 720,
+        "Format": "jpeg",
+        "Quality": 85,
+        "Transformation": "scale",
+        "Provider": "Cloudinary"
+      }
+    ],
+    "TransformationProviders": [
+      "ImageSharp",
+      "Cloudinary",
+      "FFmpeg"
+    ]
+  },
+  "CustomData": {
+    "Fields": {
+      "Image": [
+        {
+          "name": "photographer",
+          "isRequired": false
+        },
+        {
+          "name": "resolution",
+          "isRequired": true
+        }
+      ],
+      "Video": [
+        {
+          "name": "director",
+          "isRequired": false
+        },
+        {
+          "name": "duration",
+          "isRequired": true
+        }
+      ],
+      "Raw": [
+        {
+          "name": "author",
+          "isRequired": false
+        },
+        {
+          "name": "format",
+          "isRequired": false
+        }
+      ]
+    }  
+  }
+}

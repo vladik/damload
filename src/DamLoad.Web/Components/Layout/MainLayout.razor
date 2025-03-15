@@ -1,4 +1,8 @@
-﻿@inherits LayoutComponentBase
+﻿<RadzenNotification @rendermode="@RenderMode.InteractiveServer" />
+<RadzenDialog @rendermode="@RenderMode.InteractiveServer" />
+<RadzenContextMenu @rendermode="@RenderMode.InteractiveServer" />
+<RadzenTooltip @rendermode="@RenderMode.InteractiveServer" />
+@inherits LayoutComponentBase
 
 <RadzenLayout>
     <RadzenHeader>
@@ -18,7 +22,7 @@
         </RadzenRow>
     </RadzenHeader>
     <RadzenSidebar @bind-Expanded="@sidebarExpanded">
-        <Explorer />
+        <FolderExplorer />
     </RadzenSidebar>
     <RadzenBody>
         <div class="rz-p-4">
