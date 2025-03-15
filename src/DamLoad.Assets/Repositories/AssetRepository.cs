@@ -23,18 +23,9 @@ namespace DamLoad.Assets.Repositories
                 ? "SELECT * FROM assets WHERE id = @Id"
                 : "SELECT * FROM assets WHERE id = @Id AND deleted_at IS NULL";
 
-            var asset = await db.QueryFirstOrDefaultAsync<AssetEntity>(sql, new { Id = id });
-
-            if (asset != null)
-            {
-                asset.MetadataIds = await GetMetadataIdsAsync(asset.Id);
-                asset.CustomDataIds = await GetCustomDataIdsAsync(asset.Id);
-                asset.CollectionIds = await GetCollectionIdsAsync(asset.Id);
-                asset.TagIds = await GetTagIdsAsync(asset.Id);
-            }
-
-            return asset;
+            return await db.QueryFirstOrDefaultAsync<AssetEntity>(sql, new { Id = id });
         }
+
         public async Task<List<AssetEntity>> GetAllAsync(bool includeDeleted = false)
         {
             using var db = GetConnection();
@@ -44,6 +35,7 @@ namespace DamLoad.Assets.Repositories
 
             return (await db.QueryAsync<AssetEntity>(sql)).ToList();
         }
+
         public async Task<List<AssetEntity>> GetDeletedOnlyAsync()
         {
             using var db = GetConnection();
@@ -56,8 +48,8 @@ namespace DamLoad.Assets.Repositories
             using var db = GetConnection();
             string dbUtcNow = _databaseFactory.GetDbUtcNow();
             string sql = $@"
-                INSERT INTO assets (id, public_id, url, public_url, folder_id, filename, type, bytes, created_at, updated_at)
-                VALUES (@Id, @PublicId, @Url, @PublicUrl, @FolderId, @Filename, @Type, @Bytes, {dbUtcNow}, {dbUtcNow})";
+                INSERT INTO assets (id, public_id, url, public_url, filename, type, bytes, created_at, updated_at)
+                VALUES (@Id, @PublicId, @Url, @PublicUrl, @Filename, @Type, @Bytes, {dbUtcNow}, {dbUtcNow})";
             await db.ExecuteAsync(sql, asset);
         }
 
@@ -93,13 +85,6 @@ namespace DamLoad.Assets.Repositories
             await db.ExecuteAsync(sql, new { Id = id });
         }
 
-        public async Task UpdateSortOrderAsync(Guid id, int newSortOrder)
-        {
-            using var db = GetConnection();
-            string sql = "UPDATE assets SET sort_order = @SortOrder WHERE id = @Id";
-            await db.ExecuteAsync(sql, new { Id = id, SortOrder = newSortOrder });
-        }
-
         public async Task SoftDeleteAsync(Guid id)
         {
             using var db = GetConnection();
@@ -115,40 +100,6 @@ namespace DamLoad.Assets.Repositories
             await db.ExecuteAsync(sql, new { Id = id });
         }
 
-        public async Task<bool> FolderExistsAsync(Guid folderId)
-        {
-            using var db = GetConnection();
-            string sql = "SELECT EXISTS(SELECT 1 FROM folders WHERE id = @FolderId)";
-            return await db.ExecuteScalarAsync<bool>(sql, new { FolderId = folderId });
-        }
-
-        public async Task<List<Guid>> GetMetadataIdsAsync(Guid assetId)
-        {
-            using var db = GetConnection();
-            string sql = "SELECT id FROM asset_metadata WHERE asset_id = @AssetId";
-            return (await db.QueryAsync<Guid>(sql, new { AssetId = assetId })).ToList();
-        }
-
-        public async Task<List<Guid>> GetCustomDataIdsAsync(Guid assetId)
-        {
-            using var db = GetConnection();
-            string sql = "SELECT id FROM asset_custom_data WHERE asset_id = @AssetId";
-            return (await db.QueryAsync<Guid>(sql, new { AssetId = assetId })).ToList();
-        }
-
-        public async Task<List<Guid>> GetCollectionIdsAsync(Guid assetId)
-        {
-            using var db = GetConnection();
-            string sql = "SELECT collection_id FROM asset_collections WHERE asset_id = @AssetId";
-            return (await db.QueryAsync<Guid>(sql, new { AssetId = assetId })).ToList();
-        }
-
-        public async Task<List<Guid>> GetTagIdsAsync(Guid assetId)
-        {
-            using var db = GetConnection();
-            string sql = "SELECT tag_id FROM asset_tags WHERE asset_id = @AssetId";
-            return (await db.QueryAsync<Guid>(sql, new { AssetId = assetId })).ToList();
-        }
         public async Task<List<AssetEntity>> GetAssetsByCollection(Guid collectionId)
         {
             using var db = GetConnection();
@@ -175,22 +126,133 @@ namespace DamLoad.Assets.Repositories
             return (await db.QueryAsync<AssetEntity>(sql, new { TagId = tagId })).ToList();
         }
 
-        public async Task<List<AssetEntity>> GetAssetsByFolder(Guid? folderId)
+        public async Task<Guid?> GetFolderIdAsync(Guid assetId)
         {
             using var db = GetConnection();
-            string sql = folderId == null
-                ? "SELECT * FROM assets WHERE folder_id IS NULL AND deleted_at IS NULL"
-                : "SELECT * FROM assets WHERE folder_id = @FolderId AND deleted_at IS NULL";
-
-            return (await db.QueryAsync<AssetEntity>(sql, new { FolderId = folderId })).ToList();
+            string sql = @"
+            SELECT folder_id 
+            FROM asset_folder 
+            WHERE asset_id = COALESCE(
+                (SELECT variant_of_id FROM assets WHERE id = @AssetId), 
+                @AssetId
+            )";
+            return await db.ExecuteScalarAsync<Guid?>(sql, new { AssetId = assetId });
         }
 
         public async Task MoveAssetToFolder(Guid assetId, Guid? newFolderId)
         {
             using var db = GetConnection();
-            string sql = "UPDATE assets SET folder_id = @NewFolderId WHERE id = @AssetId AND folder_id != @NewFolderId";
-            await db.ExecuteAsync(sql, new { AssetId = assetId, NewFolderId = newFolderId });
+
+            if (newFolderId == null)
+            {
+                // Removing asset from a folder
+                string deleteSql = "DELETE FROM asset_folder WHERE asset_id = @AssetId";
+                await db.ExecuteAsync(deleteSql, new { AssetId = assetId });
+            }
+            else
+            {
+                // Assigning a new folder
+                string insertOrUpdateSql = @"
+                INSERT INTO asset_folder (asset_id, folder_id) 
+                VALUES (@AssetId, @FolderId)
+                ON CONFLICT (asset_id) DO UPDATE SET folder_id = EXCLUDED.folder_id";
+                await db.ExecuteAsync(insertOrUpdateSql, new { AssetId = assetId, FolderId = newFolderId });
+            }
         }
 
+        public async Task<List<AssetEntity>> GetAssetsByFolder(Guid? folderId)
+        {
+            using var db = GetConnection();
+            string sql = folderId == null
+                ? "SELECT * FROM assets WHERE id NOT IN (SELECT asset_id FROM asset_folder)"
+                : "SELECT * FROM assets WHERE id IN (SELECT asset_id FROM asset_folder WHERE folder_id = @FolderId)";
+            return (await db.QueryAsync<AssetEntity>(sql, new { FolderId = folderId })).ToList();
+        }
+
+        public async Task AssignFolderAsync(Guid assetId, Guid folderId)
+        {
+            using var db = GetConnection();
+            string sql = @"
+            INSERT INTO asset_folder (asset_id, folder_id) 
+            VALUES (@AssetId, @FolderId)
+            ON CONFLICT (asset_id) DO UPDATE SET folder_id = EXCLUDED.folder_id";
+            await db.ExecuteAsync(sql, new { AssetId = assetId, FolderId = folderId });
+        }
+
+        public async Task RemoveFolderAsync(Guid assetId)
+        {
+            using var db = GetConnection();
+            string sql = "DELETE FROM asset_folder WHERE asset_id = @AssetId";
+            await db.ExecuteAsync(sql, new { AssetId = assetId });
+        }
+
+        public async Task<List<Guid>> GetMetadataIdsAsync(Guid assetId)
+        {
+            using var db = GetConnection();
+            string sql = @"
+        SELECT id FROM asset_metadata 
+        WHERE asset_id = COALESCE(
+            (SELECT variant_of_id FROM assets WHERE id = @AssetId), 
+            @AssetId
+        )";
+            return (await db.QueryAsync<Guid>(sql, new { AssetId = assetId })).ToList();
+        }
+
+        public async Task<List<Guid>> GetCustomDataIdsAsync(Guid assetId)
+        {
+            using var db = GetConnection();
+            string sql = @"
+        SELECT id FROM asset_custom_data 
+        WHERE asset_id = COALESCE(
+            (SELECT variant_of_id FROM assets WHERE id = @AssetId), 
+            @AssetId
+        )";
+            return (await db.QueryAsync<Guid>(sql, new { AssetId = assetId })).ToList();
+        }
+
+        public async Task<List<Guid>> GetCollectionIdsAsync(Guid assetId)
+        {
+            using var db = GetConnection();
+            string sql = @"
+        SELECT collection_id FROM asset_collections 
+        WHERE asset_id = COALESCE(
+            (SELECT variant_of_id FROM assets WHERE id = @AssetId), 
+            @AssetId
+        )";
+            return (await db.QueryAsync<Guid>(sql, new { AssetId = assetId })).ToList();
+        }
+
+        public async Task<List<Guid>> GetTagIdsAsync(Guid assetId)
+        {
+            using var db = GetConnection();
+            string sql = @"
+        SELECT tag_id FROM asset_tags 
+        WHERE asset_id = COALESCE(
+            (SELECT variant_of_id FROM assets WHERE id = @AssetId), 
+            @AssetId
+        )";
+            return (await db.QueryAsync<Guid>(sql, new { AssetId = assetId })).ToList();
+        }
+
+        public async Task<List<AssetEntity>> GetAssetsInFolder(Guid? folderId)
+        {
+            using var db = GetConnection();
+
+            string sql = folderId == null
+                ? "SELECT * FROM assets WHERE id NOT IN (SELECT asset_id FROM asset_folder) AND deleted_at IS NULL"
+                : "SELECT * FROM assets WHERE id IN (SELECT asset_id FROM asset_folder WHERE folder_id = @FolderId) AND deleted_at IS NULL";
+
+            return (await db.QueryAsync<AssetEntity>(sql, new { FolderId = folderId })).ToList();
+        }
+
+        public async Task UpdateSortOrderAsync(Guid assetId, int newSortOrder)
+        {
+            using var db = GetConnection();
+            string sql = @"
+                UPDATE assets 
+                SET sort_order = @SortOrder 
+                WHERE id = @AssetId AND variant_of_id IS NULL";
+            await db.ExecuteAsync(sql, new { AssetId = assetId, SortOrder = newSortOrder });
+        }
     }
 }

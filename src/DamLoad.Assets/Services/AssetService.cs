@@ -4,39 +4,24 @@ using DamLoad.Data.Database;
 
 namespace DamLoad.Assets.Services
 {
-    public class AssetService : IAssetService, ISoftDeleteService<AssetEntity>, ISortableService<AssetEntity>
+    public class AssetService : IAssetService
     {
         private readonly IAssetRepository _repository;
-        private readonly IFolderRepository _folderRepository;
-        private readonly IAssetMetadataRepository _metadataRepository;
-        private readonly IAssetCustomDataRepository _customDataRepository;
         private readonly ISoftDeleteRepository<AssetEntity> _softDeleteRepository;
         private readonly ISortableRepository<AssetEntity> _sortableRepository;
 
         public AssetService(
             IAssetRepository repository,
-            IFolderRepository folderRepository,
-            IAssetMetadataRepository metadataRepository,
-            IAssetCustomDataRepository customDataRepository,
             ISoftDeleteRepository<AssetEntity> softDeleteRepository,
             ISortableRepository<AssetEntity> sortableRepository)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-            _folderRepository = folderRepository ?? throw new ArgumentNullException(nameof(folderRepository));
-            _metadataRepository = metadataRepository ?? throw new ArgumentNullException(nameof(metadataRepository));
-            _customDataRepository = customDataRepository ?? throw new ArgumentNullException(nameof(customDataRepository));
             _softDeleteRepository = softDeleteRepository ?? throw new ArgumentNullException(nameof(softDeleteRepository));
             _sortableRepository = sortableRepository ?? throw new ArgumentNullException(nameof(sortableRepository));
         }
 
         public async Task<AssetEntity?> GetByIdAsync(Guid id, bool includeDeleted = false) =>
             await _repository.GetByIdAsync(id, includeDeleted);
-
-        public async Task<List<AssetMetadataEntity>> GetMetadataByLocaleAsync(Guid assetId, string locale) =>
-            await _metadataRepository.GetByAssetIdAndLocaleAsync(assetId, locale);
-
-        public async Task<List<AssetCustomDataEntity>> GetCustomDataByLocaleAsync(Guid assetId, string locale) =>
-            await _customDataRepository.GetByAssetIdAndLocaleAsync(assetId, locale);
 
         public async Task<List<AssetEntity>> GetAllAsync(bool includeDeleted = false) =>
             await _repository.GetAllAsync(includeDeleted);
@@ -65,29 +50,29 @@ namespace DamLoad.Assets.Services
         public async Task UpdateSortOrderAsync(Guid id, int newSortOrder) =>
             await _sortableRepository.UpdateSortOrderAsync(id, newSortOrder);
 
-        public async Task<List<AssetEntity>> GetAssetsByCollection(Guid collectionId) =>
-            await _repository.GetAssetsByCollection(collectionId);
-
         public async Task<List<AssetEntity>> GetAssetsByTag(Guid tagId) =>
             await _repository.GetAssetsByTag(tagId);
+
+        public async Task<List<AssetEntity>> GetAssetsByCollection(Guid collectionId) =>
+            await _repository.GetAssetsByCollection(collectionId);
 
         public async Task<List<AssetEntity>> GetAssetsByFolder(Guid? folderId) =>
             await _repository.GetAssetsByFolder(folderId);
 
-        public async Task MoveAssetToFolder(Guid assetId, Guid? newFolderId)
-        {
-            if (newFolderId.HasValue)
-            {
-                var folderExists = await _folderRepository.FolderExistsAsync(newFolderId.Value);
-                if (!folderExists)
-                    throw new InvalidOperationException("Cannot move asset to a non-existent folder.");
-            }
-
+        public async Task MoveAssetToFolder(Guid assetId, Guid? newFolderId) =>
             await _repository.MoveAssetToFolder(assetId, newFolderId);
-        }
 
-        public async Task<List<AssetEntity>> GetRootAssetsAsync() =>
-            await _repository.GetAssetsByFolder(null);
+        public async Task<Guid?> GetFolderIdAsync(Guid assetId) =>
+            await _repository.GetFolderIdAsync(assetId);
+
+        public async Task AssignFolderAsync(Guid assetId, Guid folderId) =>
+            await _repository.AssignFolderAsync(assetId, folderId);
+
+        public async Task RemoveFolderAsync(Guid assetId) =>
+            await _repository.RemoveFolderAsync(assetId);
+
+        public async Task<List<AssetEntity>> GetAssetsInFolder(Guid? folderId) =>
+            await _repository.GetAssetsInFolder(folderId);
 
         public async Task<List<Guid>> GetMetadataIdsAsync(Guid assetId) =>
             await _repository.GetMetadataIdsAsync(assetId);
