@@ -25,7 +25,25 @@ namespace DamLoad.Core.Configurations
                         Locales = new List<string> { "en" },
                         LocaleFallback = true
                     },
-                    CustomDataFields = new Dictionary<AssetType, List<CustomFieldConfig>>()
+                    Variants = new VariantSettings
+                    {
+                        Enabled = true,
+                        CreateVariantsOnUpload = new List<dynamic>
+                        {
+                            new { Name = "thumb_small", Width = 100, Height = 100, Format = "webp", Quality = 75, Transformation = "crop", Provider = "ImageSharp" },
+                            new { Name = "web_standard", Width = 1280, Height = 720, Format = "jpeg", Quality = 85, Transformation = "scale", Provider = "Cloudinary" }
+                        },
+                        TransformationProviders = new List<string> { "ImageSharp", "Cloudinary", "FFmpeg" }
+                    },
+                    CustomData = new CustomDataConfig
+                    {
+                        Fields = new Dictionary<string, List<CustomFieldConfig>>
+                        {
+                            { "Image", new List<CustomFieldConfig> { new CustomFieldConfig { Name = "photographer", IsRequired = false }, new CustomFieldConfig { Name = "resolution", IsRequired = true } } },
+                            { "Video", new List<CustomFieldConfig> { new CustomFieldConfig { Name = "director", IsRequired = false }, new CustomFieldConfig { Name = "duration", IsRequired = true } } },
+                            { "Raw", new List<CustomFieldConfig> { new CustomFieldConfig { Name = "author", IsRequired = false }, new CustomFieldConfig { Name = "format", IsRequired = false } } }
+                        }
+                    }
                 };
 
                 File.WriteAllText(_configFilePath, JsonSerializer.Serialize(defaultSettings, new JsonSerializerOptions { WriteIndented = true }));
@@ -56,7 +74,7 @@ namespace DamLoad.Core.Configurations
 
         public List<CustomFieldConfig>? GetCustomFieldsForAssetType(AssetType assetType)
         {
-            return _settings.CustomDataFields.ContainsKey(assetType) ? _settings.CustomDataFields[assetType] : null;
+            return _settings.CustomData.Fields.ContainsKey(assetType.ToString()) ? _settings.CustomData.Fields[assetType.ToString()] : null;
         }
     }
 }

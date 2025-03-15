@@ -9,6 +9,10 @@ namespace DamLoad.Assets.Repositories
         Task<List<AssetEntity>> GetAssetsByFolder(Guid? folderId);
         Task<List<AssetEntity>> GetAssetsByCollection(Guid collectionId);
         Task MoveAssetToFolder(Guid assetId, Guid? newFolderId);
+        Task<Guid?> GetFolderIdAsync(Guid assetId);
+        Task AssignFolderAsync(Guid assetId, Guid folderId);
+        Task RemoveFolderAsync(Guid assetId);
+        Task<List<AssetEntity>> GetAssetsInFolder(Guid? folderId);
         Task<List<Guid>> GetMetadataIdsAsync(Guid assetId);
         Task<List<Guid>> GetCustomDataIdsAsync(Guid assetId);
         Task<List<Guid>> GetCollectionIdsAsync(Guid assetId);
