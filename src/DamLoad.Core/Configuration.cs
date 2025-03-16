@@ -8,7 +8,7 @@ namespace DamLoad.Core
         public static IServiceCollection AddDamLoadCore(this IServiceCollection services)
         {
             services.AddSingleton<ConfigurationService>();
-            services.AddSingleton<ApplicationContext>();
+            services.AddSingleton<Context>();
             return services;
         }
     }
