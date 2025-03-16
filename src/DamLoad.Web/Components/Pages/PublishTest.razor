@@ -1,0 +1,102 @@
+@page "/publish"
+@using DamLoad.Data.Storage
+@inject IStorageProvider StorageProvider
+
+<h3>Storage Provider Test</h3>
+
+<!-- File Actions -->
+<div>
+    <label>Asset Name:</label>
+    <input type="text" @bind="AssetName" placeholder="Enter asset name" />
+
+    <label>Expiration Date:</label>
+    <input type="datetime-local" @bind="ExpirationDate" />
+
+    <button @onclick="PublishAsset">Publish</button>
+    <button @onclick="UnpublishAsset">Unpublish</button>
+    <button @onclick="SetFutureExpiration">Set Expiry (Future)</button>
+    <button @onclick="SetPastExpiration">Set Expiry (Past)</button>
+    <button @onclick="ValidateAccess">Validate Access</button>
+</div>
+
+@if (!string.IsNullOrEmpty(StatusMessage))
+{
+    <p>@StatusMessage</p>
+}
+
+@code {
+    private string AssetName { get; set; } = "";
+    private string ExpirationDateString { get; set; } = "";
+    private string StatusMessage = "";
+    private DateTime? ExpirationDate { get; set; } = null; 
+
+    private async Task PublishAsset()
+    {
+        if (string.IsNullOrWhiteSpace(AssetName))
+        {
+            StatusMessage = "Enter an asset name.";
+            return;
+        }
+
+        await StorageProvider.SetAccessAsync(AssetName, true);
+        StatusMessage = $"Asset {AssetName} has been published (Public).";
+    }
+
+    private async Task UnpublishAsset()
+    {
+        if (string.IsNullOrWhiteSpace(AssetName))
+        {
+            StatusMessage = "Enter an asset name.";
+            return;
+        }
+
+        await StorageProvider.SetAccessAsync(AssetName, false);
+        StatusMessage = $"Asset {AssetName} has been unpublished (Private).";
+    }
+
+    private async Task SetFutureExpiration()
+    {
+        if (string.IsNullOrWhiteSpace(AssetName) || string.IsNullOrWhiteSpace(ExpirationDateString))
+        {
+            StatusMessage = "Enter an asset name and expiration date.";
+            return;
+        }
+
+        if (DateTime.TryParse(ExpirationDateString, out var expirationDate))
+        {
+            await StorageProvider.SetExpirationAsync(AssetName, expirationDate);
+            StatusMessage = $"Asset {AssetName} will expire on {expirationDate}.";
+        }
+        else
+        {
+            StatusMessage = "Invalid expiration date format.";
+        }
+    }
+
+    private async Task SetPastExpiration()
+    {
+        if (string.IsNullOrWhiteSpace(AssetName))
+        {
+            StatusMessage = "Enter an asset name.";
+            return;
+        }
+
+        var pastDate = DateTime.UtcNow.AddMinutes(-5);
+        await StorageProvider.SetExpirationAsync(AssetName, pastDate);
+        StatusMessage = $"Asset {AssetName} expired on {pastDate}.";
+    }
+
+    private async Task ValidateAccess()
+    {
+        if (string.IsNullOrWhiteSpace(AssetName))
+        {
+            StatusMessage = "Enter an asset name.";
+            return;
+        }
+
+        //var isAccessible = await StorageProvider.ValidateAccessAsync(AssetName);
+        //StatusMessage = isAccessible
+           // ? $"Asset {AssetName} is still accessible."
+            //: $"Asset {AssetName} is NOT accessible.";
+    }
+}
