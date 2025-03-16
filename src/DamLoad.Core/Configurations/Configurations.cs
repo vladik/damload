@@ -1,6 +1,4 @@
 ﻿
-using DamLoad.Core.Enums;
-
 namespace DamLoad.Core.Configurations
 {
     public class LocalizationConfig
@@ -11,6 +9,22 @@ namespace DamLoad.Core.Configurations
         public string DefaultLocale => Locales.Count > 0 ? Locales[0] : "en";
     }
 
+    public class StorageConfig
+    {
+        public string StorageRoot { get; set; } = string.Empty;
+        public string CdnBaseUrl { get; set; } = string.Empty;
+        public CdnConfig CdnConfiguration { get; set; } = new();
+    }
+
+    public class CdnConfig
+    {
+        public string Provider { get; set; } = "AzureCDN"; // Default to Azure
+        public string AccountId { get; set; } = string.Empty; // Subscription ID / AWS Account ID
+        public string ResourceId { get; set; } = string.Empty; // Resource Group / AWS CloudFormation Stack
+        public string ProfileName { get; set; } = string.Empty; // CDN Profile Name
+        public string EndpointName { get; set; } = string.Empty; // CDN Endpoint Name
+        public string ApiKey { get; set; } = string.Empty; // Optional API Key for External CDNs
+    }
     public class VariantSettings
     {
         public bool Enabled { get; set; } = true;
@@ -31,6 +45,7 @@ namespace DamLoad.Core.Configurations
 
     public class AppSettings
     {
+        public StorageConfig Storage { get; set; } = new();
         public LocalizationConfig Localization { get; set; } = new();
         public VariantSettings Variants { get; set; } = new();
         public CustomDataConfig CustomData { get; set; } = new();

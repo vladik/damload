@@ -1,0 +1,99 @@
+@page "/upload"
+@using DamLoad.Data.Storage
+@inject IStorageProvider StorageProvider
+
+<h3>Storage Provider Test</h3>
+
+<!-- File Upload -->
+<InputFile OnChange="HandleFileSelected" />
+<button @onclick="UploadFile">Upload File</button>
+
+<!-- File Actions -->
+<div>
+    <input type="text" @bind="AssetName" placeholder="Asset Name" />
+    <button @onclick="RemoveFile">Delete</button>
+    <button @onclick="RenameFile">Rename</button>
+    <button @onclick="CacheCdnUrl">Cache in CDN</button>
+    <button @onclick="RemoveFromCdn">Invalidate CDN Cache</button>
+</div>
+
+@if (!string.IsNullOrEmpty(StatusMessage))
+{
+    <p>@StatusMessage</p>
+}
+
+@code {
+    private string AssetName { get; set; } = "";
+    private IBrowserFile? SelectedFile;
+    private string StatusMessage = "";
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        SelectedFile = e.File;
+    }
+
+    private async Task UploadFile()
+    {
+        if (SelectedFile == null)
+        {
+            StatusMessage = "No file selected.";
+            return;
+        }
+
+        var stream = SelectedFile.OpenReadStream();
+        AssetName = SelectedFile.Name;
+
+        await StorageProvider.UploadAsync(stream, AssetName, SelectedFile.ContentType);
+        StatusMessage = $"File {AssetName} uploaded successfully.";
+    }
+
+    private async Task RemoveFile()
+    {
+        if (string.IsNullOrWhiteSpace(AssetName))
+        {
+            StatusMessage = "Enter an asset name.";
+            return;
+        }
+
+        await StorageProvider.RemoveAsync(AssetName);
+        StatusMessage = $"File {AssetName} deleted successfully.";
+    }
+
+    private async Task RenameFile()
+    {
+        if (string.IsNullOrWhiteSpace(AssetName))
+        {
+            StatusMessage = "Enter an asset name.";
+            return;
+        }
+
+        string newName = AssetName + "_renamed";
+        await StorageProvider.RenameAsync(AssetName, newName);
+        StatusMessage = $"File renamed from {AssetName} to {newName}.";
+        AssetName = newName;
+    }
+
+    private async Task CacheCdnUrl()
+    {
+        if (string.IsNullOrWhiteSpace(AssetName))
+        {
+            StatusMessage = "Enter an asset name.";
+            return;
+        }
+
+        await StorageProvider.CacheCdnUrl(AssetName);
+        StatusMessage = $"CDN cache updated for {AssetName}.";
+    }
+
+    private async Task RemoveFromCdn()
+    {
+        if (string.IsNullOrWhiteSpace(AssetName))
+        {
+            StatusMessage = "Enter an asset name.";
+            return;
+        }
+
+        await StorageProvider.RemoveFromCdnAsync(AssetName);
+        StatusMessage = $"CDN cache invalidated for {AssetName}.";
+    }
+}

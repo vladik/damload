@@ -25,6 +25,20 @@ namespace DamLoad.Core.Configurations
                         Locales = new List<string> { "en" },
                         LocaleFallback = true
                     },
+                    Storage = new StorageConfig
+                    {
+                        StorageRoot = string.Empty,
+                        CdnBaseUrl = string.Empty,
+                        CdnConfiguration = new CdnConfig
+                        {
+                            Provider = "AzureCDN",
+                            AccountId = string.Empty,
+                            ResourceId = string.Empty,
+                            ProfileName = string.Empty,
+                            EndpointName = string.Empty,
+                            ApiKey = string.Empty
+                        }
+                    },
                     Variants = new VariantSettings
                     {
                         Enabled = true,

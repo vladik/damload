@@ -2,8 +2,10 @@ using DamLoad.Web.Components;
 using Radzen;
 using DamLoad.Core;
 using DamLoad.Assets;
+using DamLoad.Core.Configurations;
 using DamLoad.Data.Database;
 using DamLoad.Data.Local;
+using DamLoad.Data.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,16 +13,24 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddSingleton(new DatabaseFactory(connectionString));
-
 builder.Services.AddRadzenComponents();
 
 builder.Services.AddDamLoadCore();
 builder.Services.AddDamLoadAssets();
 
-builder.Services.AddScoped<LocalStorageService>();
+var databaseConnectionString = builder.Configuration.GetConnectionString("DatabaseConnection")
+    ?? throw new InvalidOperationException("Connection string 'DatabaseConnection' not found.");
+builder.Services.AddSingleton(new DatabaseFactory(databaseConnectionString));
+
+var storageConnectionString = builder.Configuration.GetConnectionString("StorageConnection")
+                              ?? throw new InvalidOperationException("Connection string 'StorageConnection' not found.");
+
+builder.Services.AddSingleton(provider =>
+{
+    var configurationService = provider.GetRequiredService<ConfigurationService>();
+    var storageFactory = new StorageFactory(storageConnectionString, configurationService);
+    return storageFactory.CreateStorageProvider();
+});
 
 var app = builder.Build();
 
