@@ -16,34 +16,6 @@
     "Locales": [ "en", "fr", "de" ],
     "LocaleFallback": true
   },
-  "Variants": {
-    "Enabled": true,
-    "CreateVariantsOnUpload": [
-      {
-        "Name": "thumb_small",
-        "Width": 100,
-        "Height": 100,
-        "Format": "webp",
-        "Quality": 75,
-        "Transformation": "crop",
-        "Provider": "ImageSharp"
-      },
-      {
-        "Name": "web_standard",
-        "Width": 1280,
-        "Height": 720,
-        "Format": "jpeg",
-        "Quality": 85,
-        "Transformation": "scale",
-        "Provider": "Cloudinary"
-      }
-    ],
-    "TransformationProviders": [
-      "ImageSharp",
-      "Cloudinary",
-      "FFmpeg"
-    ]
-  },
   "CustomData": {
     "Fields": {
       "Image": [
@@ -76,6 +48,103 @@
           "isRequired": false
         }
       ]
-    }  
+    }
+  },
+  "Workflow": {
+    "defaultStatus": "Published",
+    "finalStatus": "Published",
+    "statuses": [
+      {
+        "name": "Published",
+        "description": "Final public state (default on upload)",
+        "next": [ "Unpublished", "Archived" ],
+        "approval": false,
+        "roles": [ "Admin", "Editor" ],
+        "storageRoot": "damload-public"
+      },
+      {
+        "name": "Unpublished",
+        "description": "Private, not visible to the public",
+        "next": [ "Published", "Archived" ],
+        "approval": false,
+        "roles": [ "Admin", "Editor" ],
+        "storageRoot": "damload-private"
+      },
+      {
+        "name": "Archived",
+        "description": "Soft-deleted, not visible but can be restored",
+        "next": [ "Published", "Unpublished" ],
+        "approval": false,
+        "roles": [ "Admin" ],
+        "storageRoot": "damload-archived"
+      }
+    ]
+  },
+  "Variants": {
+    "Enabled": true,
+    "CreateVariantsOnUpload": [
+      {
+        "Name": "Copy of uploaded",
+        "Transformations": []
+      },
+      {
+        "Name": "Web Standard",
+        "Transformations": [
+          {
+            "Provider": "Cloudinary",
+            "Operation": "scale",
+            "Parameters": {
+              "Width": 1280,
+              "Height": 720,
+              "Format": "jpeg",
+              "Quality": 85
+            }
+          },
+          {
+            "Provider": "ImageSharp",
+            "Operation": "Crop",
+            "Parameters": {
+              "Width": 180,
+              "Height": 320,
+              "PositionX": 25,
+              "PositionY": 35
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "Transformation": {
+    "Providers": [
+      {
+        "Name": "ImageSharp",
+        "Operations": [ "Crop", "Resize", "Rotate" ]
+      },
+      {
+        "Name": "Cloudinary",
+        "Operations": [ "scale", "watermark", "enhance" ]
+      },
+      {
+        "Name": "FFmpeg",
+        "Operations": [ "convert", "trim", "overlay" ]
+      }
+    ]
+  },
+  "Tasks": {
+    "UnpublishExpiredAssets": {
+      "Type": "cron",
+      "Expression": "0 0 * * 1",
+      "Priority": 10
+    },
+    "CleanupTemporaryFiles": {
+      "Type": "interval",
+      "Interval": "00:30:00",
+      "Priority": 5
+    },
+    "ReindexSearch": {
+      "Type": "cron",
+      "Expression": "0 6 * * *",
+      "Priority": 3
+    }
   }
 }

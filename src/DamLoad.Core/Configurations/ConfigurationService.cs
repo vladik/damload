@@ -1,13 +1,12 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using DamLoad.Core.Enums;
 
 namespace DamLoad.Core.Configurations
 {
     public class ConfigurationService
     {
         private readonly string _configFilePath = "damload.config.json";
-        private AppSettings _settings;
+        private readonly AppSettings _settings;
 
         public ConfigurationService()
         {
@@ -16,79 +15,92 @@ namespace DamLoad.Core.Configurations
 
         private AppSettings LoadSettings()
         {
-            if (!File.Exists(_configFilePath))
+            if (File.Exists(_configFilePath))
             {
-                var defaultSettings = new AppSettings
-                {
-                    Localization = new LocalizationConfig
-                    {
-                        Locales = new List<string> { "en" },
-                        LocaleFallback = true
-                    },
-                    Storage = new StorageConfig
-                    {
-                        StorageRoot = string.Empty,
-                        CdnBaseUrl = string.Empty,
-                        CdnConfiguration = new CdnConfig
-                        {
-                            Provider = "AzureCDN",
-                            AccountId = string.Empty,
-                            ResourceId = string.Empty,
-                            ProfileName = string.Empty,
-                            EndpointName = string.Empty,
-                            ApiKey = string.Empty
-                        }
-                    },
-                    Variants = new VariantSettings
-                    {
-                        Enabled = true,
-                        CreateVariantsOnUpload = new List<dynamic>
-                        {
-                            new { Name = "thumb_small", Width = 100, Height = 100, Format = "webp", Quality = 75, Transformation = "crop", Provider = "ImageSharp" },
-                            new { Name = "web_standard", Width = 1280, Height = 720, Format = "jpeg", Quality = 85, Transformation = "scale", Provider = "Cloudinary" }
-                        },
-                        TransformationProviders = new List<string> { "ImageSharp", "Cloudinary", "FFmpeg" }
-                    },
-                    CustomData = new CustomDataConfig
-                    {
-                        Fields = new Dictionary<string, List<CustomFieldConfig>>
-                        {
-                            { "Image", new List<CustomFieldConfig> { new CustomFieldConfig { Name = "photographer", IsRequired = false }, new CustomFieldConfig { Name = "resolution", IsRequired = true } } },
-                            { "Video", new List<CustomFieldConfig> { new CustomFieldConfig { Name = "director", IsRequired = false }, new CustomFieldConfig { Name = "duration", IsRequired = true } } },
-                            { "Raw", new List<CustomFieldConfig> { new CustomFieldConfig { Name = "author", IsRequired = false }, new CustomFieldConfig { Name = "format", IsRequired = false } } }
-                        }
-                    }
-                };
-
-                File.WriteAllText(_configFilePath, JsonSerializer.Serialize(defaultSettings, new JsonSerializerOptions { WriteIndented = true }));
-                return defaultSettings;
+                var json = File.ReadAllText(_configFilePath);
+                var settings = JsonSerializer.Deserialize<AppSettings>(json, new JsonSerializerOptions { Converters = { new JsonStringEnumConverter() } });
+                return settings ?? new AppSettings();
             }
 
-            var json = File.ReadAllText(_configFilePath);
-            var settings = JsonSerializer.Deserialize<AppSettings>(json, new JsonSerializerOptions { Converters = { new JsonStringEnumConverter() } });
-
-            return settings ?? new AppSettings();
+            var defaultSettings = GetDefaultSettings();
+            File.WriteAllText(_configFilePath, JsonSerializer.Serialize(defaultSettings, new JsonSerializerOptions { WriteIndented = true }));
+            return defaultSettings;
         }
 
         public AppSettings GetSettings() => _settings;
 
-        public async Task UpdateSettingsAsync(AppSettings newSettings)
+        private static AppSettings GetDefaultSettings()
         {
-            _settings = newSettings;
-            var json = JsonSerializer.Serialize(_settings, new JsonSerializerOptions
+            return new AppSettings
             {
-                WriteIndented = true,
-                Converters = { new JsonStringEnumConverter() }
-            });
-
-            await File.WriteAllTextAsync(_configFilePath, json);
-        }
-
-        public string GetDefaultLocale() => _settings.Localization.DefaultLocale;
-
-        public List<CustomFieldConfig>? GetCustomFieldsForAssetType(AssetType assetType)
-        {
-            return _settings.CustomData.Fields.ContainsKey(assetType.ToString()) ? _settings.CustomData.Fields[assetType.ToString()] : null;
+                Localization = new LocalizationConfig
+                {
+                    Locales = new() { "en" },
+                    LocaleFallback = true
+                },
+                Storage = new StorageConfig
+                {
+                    StorageRoot = string.Empty,
+                    CdnBaseUrl = string.Empty,
+                    CdnConfiguration = new CdnConfig()
+                },
+                Workflow = new WorkflowConfig
+                {
+                    DefaultStatus = "Published",
+                    FinalStatus = "Published",
+                    Statuses = new()
+                    {
+                        new WorkflowStatus
+                        {
+                            Name = "Published",
+                            Description = "Final public state (default on upload)",
+                            Next = new() { "Unpublished", "Archived" },
+                            Approval = false,
+                            Roles = new() { "Admin", "Editor" },
+                            StorageRoot = "public"
+                        }
+                    }
+                },
+                Variants = new VariantsConfig
+                {
+                    Enabled = false,
+                    CreateVariantsOnUpload = new()
+                },
+                Transformation = new TransformationConfig
+                {
+                    Providers = new()
+                    {
+                        new TransformationProvider
+                        {
+                            Name = "ImageSharp",
+                            Operations = new() { "Crop", "Resize", "Rotate" }
+                        },
+                        new TransformationProvider
+                        {
+                            Name = "Cloudinary",
+                            Operations = new() { "scale", "watermark", "enhance" }
+                        },
+                        new TransformationProvider
+                        {
+                            Name = "FFmpeg",
+                            Operations = new() { "convert", "trim", "overlay" }
+                        }
+                    }
+                },
+                CustomData = new CustomDataConfig
+                {
+                    Fields = new()
+                },
+                Tasks = new TasksConfig
+                {
+                    TaskDefinitions = new()
+                    {
+                        { "UnpublishExpiredAssets", new TaskDefinition { Type = "cron", Expression = "0 0 * * 1", Priority = 10 } },
+                        { "CleanupTemporaryFiles", new TaskDefinition { Type = "interval", Interval = "00:30:00", Priority = 5 } },
+                        { "ReindexSearch", new TaskDefinition { Type = "cron", Expression = "0 6 * * *", Priority = 3 } }
+                    }
+                }
+            };
         }
     }
 }

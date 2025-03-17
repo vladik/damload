@@ -1,11 +1,13 @@
-﻿namespace DamLoad.Core.Configurations
+﻿using DamLoad.Core.Configurations;
+
+namespace DamLoad.Core
 {
-    public class ApplicationContext
+    public class Context
     {
         private readonly ConfigurationService _configService;
         private readonly AppSettings _settings;
 
-        public ApplicationContext(ConfigurationService configService)
+        public Context(ConfigurationService configService)
         {
             _configService = configService ?? throw new ArgumentNullException(nameof(configService));
             _settings = _configService.GetSettings();
