@@ -26,9 +26,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DamLoad.Abstractions\DamLoad.Abstractions.csproj" />
     <ProjectReference Include="..\DamLoad.Core\DamLoad.Core.csproj" />
     <ProjectReference Include="..\DamLoad.Data\DamLoad.Data.csproj" />
     <ProjectReference Include="..\DamLoad.Search\DamLoad.Search.csproj" />
+    <ProjectReference Include="..\DamLoad.Workflow\DamLoad.Workflow.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="damload.assets.config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

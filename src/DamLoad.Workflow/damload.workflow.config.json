@@ -1,0 +1,22 @@
+{
+  "damload.assets": {
+    "defaultStatus": "Published",
+    "statuses": [
+      {
+        "name": "Published",
+        "allowedTransitions": [],
+        "rolesAllowedToChange": []
+      },
+      {
+        "name": "Unpublished",
+        "allowedTransitions": [],
+        "rolesAllowedToChange": []
+      },
+      {
+        "name": "Archived",
+        "allowedTransitions": [],
+        "rolesAllowedToChange": []
+      }
+    ]
+  }
+}

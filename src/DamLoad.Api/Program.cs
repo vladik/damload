@@ -1,8 +1,13 @@
+using DamLoad.Core.Modules;
 using FastEndpoints;
 
-var bld = WebApplication.CreateBuilder();
-bld.Services.AddFastEndpoints();
+var builder = WebApplication.CreateBuilder();
 
-var app = bld.Build();
+var moduleAssemblies = ModuleLoader.LoadModules(builder.Services);
+
+builder.Services.AddFastEndpoints(o => o.Assemblies = moduleAssemblies);
+
+var app = builder.Build();
 app.UseFastEndpoints();
+
 app.Run();

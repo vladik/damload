@@ -11,7 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DamLoad.Abstractions\DamLoad.Abstractions.csproj" />
     <ProjectReference Include="..\DamLoad.Core\DamLoad.Core.csproj" />
+    <ProjectReference Include="..\DamLoad.Workflow\DamLoad.Workflow.csproj" />
   </ItemGroup>
 
 </Project>
