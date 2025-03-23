@@ -1,32 +1,25 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
-
   <ItemGroup>
-    <SupportedPlatform Include="browser" />
+    <None Remove="damload.assets.config.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="damload.assets.config.json" />
+  </ItemGroup>
+  
+    <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="FastEndpoints" Version="5.35.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.2" />
-    <PackageReference Include="Radzen.Blazor" Version="6.2.4" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Components\Collections\" />
-    <Folder Include="Components\Search\" />
-    <Folder Include="Components\Tags\" />
-    <Folder Include="wwwroot\" />
-  </ItemGroup>
-
-  <ItemGroup>
+  
+   <ItemGroup>
     <ProjectReference Include="..\DamLoad.Abstractions\DamLoad.Abstractions.csproj" />
     <ProjectReference Include="..\DamLoad.Core\DamLoad.Core.csproj" />
     <ProjectReference Include="..\DamLoad.Data\DamLoad.Data.csproj" />
