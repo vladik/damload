@@ -1,5 +1,4 @@
-﻿using DamLoad.Abstractions.Models;
-using DamLoad.Abstractions.Modules;
+﻿using DamLoad.Abstractions.Modules;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
@@ -7,8 +6,6 @@ namespace DamLoad.Core.Modules
 {
     public static class ModuleLoader
     {
-        private static readonly ModuleRegistry _registry = new();
-
         public static List<Assembly> LoadModules(IServiceCollection services)
         {
             var assemblies = new List<Assembly>();
@@ -51,26 +48,9 @@ namespace DamLoad.Core.Modules
                             var configInstance = loadMethod.Invoke(null, new object[] { assembly })!;
                             services.AddSingleton(configType, configInstance);
                         }
-
-                        _registry.Register(moduleIdentifier!, new ModuleMetadataModel
-                        {
-                            Identifier = moduleIdentifier!,
-                            ConfigFile = configFile
-                        });
-                    }
-                }
-
-                // Auto-register types that belong to this module (by namespace prefix)
-                foreach (var type in assembly.GetTypes())
-                {
-                    if (type.IsClass && type.Namespace?.StartsWith(moduleIdentifier!, StringComparison.OrdinalIgnoreCase) == true)
-                    {
-                        _registry.RegisterType(type.FullName!, moduleIdentifier!);
                     }
                 }
             }
-
-            services.AddSingleton(_registry);
 
             return assemblies;
         }

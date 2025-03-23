@@ -1,15 +1,16 @@
 ﻿using DamLoad.Abstractions.Modules;
-using DamLoad.Core.Modules;
+using DamLoad.Abstractions.Workflow.Providers;
 using DamLoad.Workflow.Configuration;
+using DamLoad.Workflow.Providers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DamLoad.Workflow
 {
-    public class Module : IModule, IModuleConfig<WorkflowConfig>
+    public class Module : BaseModule, IModuleConfig<WorkflowConfig>
     {
-        public void Register(IServiceCollection services)
+        public override void Register(IServiceCollection services)
         {
-            services.AddSingleton(typeof(IWorkflowStatusProvider<>), typeof(WorkflowStatusProvider<>));
+            services.AddSingleton<IWorkflowStatusProvider,WorkflowStatusProvider>();
         }
     }
 }

@@ -1,14 +1,13 @@
 ﻿using DamLoad.Abstractions.Modules;
-using DamLoad.Abstractions.Startup;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DamLoad.Assets
+namespace DamLoad.Webhooks
 {
-    public class Module : BaseModule
+    public class Module : BaseModule, IModuleConfig<WebhooksConfig>
     {
         public override void Register(IServiceCollection services)
         {
-            services.AddSingleton<IStartupHook, StartupHook>();
+            
         }
     }
 }

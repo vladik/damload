@@ -14,6 +14,8 @@
     <ProjectReference Include="..\DamLoad.Abstractions\DamLoad.Abstractions.csproj" />
     <ProjectReference Include="..\DamLoad.Assets\DamLoad.Assets.csproj" />
     <ProjectReference Include="..\DamLoad.Core\DamLoad.Core.csproj" />
+    <ProjectReference Include="..\DamLoad.Events\DamLoad.Events.csproj" />
+    <ProjectReference Include="..\DamLoad.Webhooks\DamLoad.Webhooks.csproj" />
     <ProjectReference Include="..\DamLoad.Workflow\DamLoad.Workflow.csproj" />
   </ItemGroup>
 

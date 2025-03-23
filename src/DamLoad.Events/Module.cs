@@ -5,9 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DamLoad.Events
 {
-    public class Module : IModule, IModuleConfig<EventsConfig>
+    public class Module : BaseModule, IModuleConfig<EventsConfig>
     {
-        public void Register(IServiceCollection services)
+        public override void Register(IServiceCollection services)
         {
             // Resolve the appropriate IEventBus from registered IEventBusProvider implementations
             services.AddSingleton<IEventBus>(sp =>

@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DamLoad.Abstractions", "Dam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DamLoad.Events", "DamLoad.Events\DamLoad.Events.csproj", "{4FE67B6B-45BB-46A1-AF6B-4D644A11F0A5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DamLoad.Webhooks", "DamLoad.Webhooks\DamLoad.Webhooks.csproj", "{0E285AD6-6DFF-4081-9201-B564B1E282B0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{4FE67B6B-45BB-46A1-AF6B-4D644A11F0A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FE67B6B-45BB-46A1-AF6B-4D644A11F0A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FE67B6B-45BB-46A1-AF6B-4D644A11F0A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E285AD6-6DFF-4081-9201-B564B1E282B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E285AD6-6DFF-4081-9201-B564B1E282B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E285AD6-6DFF-4081-9201-B564B1E282B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E285AD6-6DFF-4081-9201-B564B1E282B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +96,7 @@ Global
 		{3F694574-0E47-4FC7-BD7A-A3DBBA22A14E} = {78EA16B7-18A5-4558-890A-7E83B8B99923}
 		{FFAA60D8-FE17-41E6-AD09-33A377555814} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{4FE67B6B-45BB-46A1-AF6B-4D644A11F0A5} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{0E285AD6-6DFF-4081-9201-B564B1E282B0} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A09D05F4-3704-4BF7-A1A5-C4B0B374DDD6}

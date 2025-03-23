@@ -1,28 +1,38 @@
-﻿using DamLoad.Abstractions.Workflow;
-using DamLoad.Core.Modules;
+﻿using DamLoad.Abstractions.Workflow.Providers;
 using DamLoad.Workflow.Configuration;
 
-public class WorkflowStatusProvider<T> : IWorkflowStatusProvider<T>
+namespace DamLoad.Workflow.Providers;
+public class WorkflowStatusProvider : IWorkflowStatusProvider
 {
-    private readonly WorkflowDefinition _definition;
+    private readonly WorkflowConfig _config;
 
-    public WorkflowStatusProvider(WorkflowConfig config, ModuleRegistry registry)
+    public WorkflowStatusProvider(WorkflowConfig config)
     {
-        var typeName = typeof(T).FullName!;
-
-        if (!registry.TryGetModuleIdentifierForType(typeName, out var moduleIdentifier))
-            throw new Exception($"No module registered for entity type: {typeName}");
-
-        if (!config.TryGetValue(moduleIdentifier, out var def))
-            throw new Exception($"No workflow definition found for module: {moduleIdentifier}");
-
-        _definition = def;
+        _config = config;
     }
 
-    public string GetDefaultStatus() => _definition.DefaultStatus;
+    public string GetDefaultStatus(string moduleIdentifier)
+    {
+        var def = GetDefinition(moduleIdentifier);
+        return def.DefaultStatus;
+    }
 
-    public IEnumerable<string> GetAllStatuses() => _definition.Statuses.Select(s => s.Name);
+    public IEnumerable<string> GetAllStatuses(string moduleIdentifier)
+    {
+        return GetDefinition(moduleIdentifier).Statuses.Select(s => s.Name);
+    }
 
-    public bool IsValidStatus(string status) =>
-        _definition.Statuses.Any(s => s.Name.Equals(status, StringComparison.OrdinalIgnoreCase));
+    public bool IsValidStatus(string moduleIdentifier, string status)
+    {
+        return GetDefinition(moduleIdentifier)
+            .Statuses.Any(s => s.Name.Equals(status, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private WorkflowDefinition GetDefinition(string moduleIdentifier)
+    {
+        if (!_config.TryGetValue(moduleIdentifier, out var def))
+            throw new InvalidOperationException($"No workflow defined for module '{moduleIdentifier}'");
+
+        return def;
+    }
 }

@@ -1,6 +1,7 @@
 ﻿using DamLoad.Abstractions.Events;
 using DamLoad.Abstractions.Models;
 using DamLoad.Abstractions.Workflow;
+using DamLoad.Abstractions.Workflow.Providers;
 using DamLoad.Assets.Entities;
 using DamLoad.Assets.Services;
 using FastEndpoints;
@@ -9,11 +10,11 @@ namespace DamLoad.Assets.Api.Endpoints
 {
     public class CreateAsset : EndpointWithoutRequest
     {
-        private readonly IWorkflowStatusProvider<AssetEntity> _workflowProvider;
+        private readonly IWorkflowStatusProvider _workflowProvider;
         private readonly Abstractions.Events.IEventBus _eventBus;
 
         public CreateAsset(
-            IWorkflowStatusProvider<AssetEntity> workflowProvider,
+            IWorkflowStatusProvider workflowProvider,
             Abstractions.Events.IEventBus eventBus)
         {
 
@@ -29,11 +30,11 @@ namespace DamLoad.Assets.Api.Endpoints
 
         public override async Task HandleAsync(CancellationToken ct)
         {
-            var status = _workflowProvider.GetDefaultStatus();
+            var status = _workflowProvider.GetAllStatuses(Module.Identifier);
             await _eventBus.PublishAsync(new EntityEvent<AssetModel>
             {
                 Identifier = "damload.assets:created",
-                Data = new AssetModel { Status = status }
+                Data = new AssetModel { Status = status.First() }
             });
 
             await SendOkAsync(ct);

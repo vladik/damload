@@ -1,8 +1,9 @@
-﻿namespace DamLoad.Abstractions.Workflow
+﻿namespace DamLoad.Abstractions.Workflow.Providers
 {
-    public interface IWorkflowStatusProvider<T>
+    public interface IWorkflowStatusProvider
     {
-        string GetDefaultStatus();
-        bool IsValidStatus(string status);
+        string GetDefaultStatus(string moduleIdentifier);
+        IEnumerable<string> GetAllStatuses(string moduleIdentifier);
+        bool IsValidStatus(string moduleIdentifier, string status);
     }
 }
