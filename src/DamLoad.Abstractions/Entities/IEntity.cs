@@ -1,4 +1,4 @@
-﻿namespace DamLoad.Core.Base.Entities
+﻿namespace DamLoad.Abstractions.Entities
 {
     public interface IEntity : IBaseEntity
     {

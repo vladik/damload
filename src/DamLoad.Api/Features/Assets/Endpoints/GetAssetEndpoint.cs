@@ -1,9 +1,7 @@
 ﻿using DamLoad.Api.Features.Assets.Mappers;
 using DamLoad.Api.Features.Assets.Requests;
 using DamLoad.Api.Features.Assets.Responses;
-using DamLoad.Core.Contracts.Models;
 using FastEndpoints;
-using System;
 
 namespace DamLoad.Api.Features.Assets.Endpoints
 {
@@ -17,8 +15,8 @@ namespace DamLoad.Api.Features.Assets.Endpoints
 
         public override async Task HandleAsync(AssetRequest req, CancellationToken ct)
         {
-            AssetModel model = Map.ToEntity(req);
-            Response = Map.FromEntity(model);
+            //AssetModel model = Map.ToEntity(req);
+            //Response = Map.FromEntity(model);
             await SendAsync(Response, cancellation: ct);
         }
     }

@@ -1,9 +1,7 @@
-﻿using DamLoad.Abstractions.Startup;
-using DamLoad.Assets.Contracts;
+﻿using DamLoad.Abstractions.Hooks;
 using DamLoad.Assets.Entities;
 using DamLoad.Assets.Repositories;
 using DamLoad.Assets.Services;
-using DamLoad.Core.Contracts;
 using DamLoad.Data.Database;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,7 +19,6 @@ namespace DamLoad.Assets
             services.AddScoped<ISoftDeleteService<AssetEntity>, AssetService>();
             services.AddScoped<ISortableService<AssetEntity>, AssetService>();
             services.AddScoped<IAssetService, AssetService>();
-            services.AddScoped<IAssetContract, AssetContract>();
             services.AddScoped<IFolderRepository, FolderRepository>();
             services.AddScoped<IFolderService, FolderService>();
             services.AddScoped<ICollectionRepository, CollectionRepository>();

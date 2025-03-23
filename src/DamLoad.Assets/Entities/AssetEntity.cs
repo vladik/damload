@@ -1,5 +1,5 @@
-﻿using DamLoad.Core.Base.Entities;
-using DamLoad.Core.Enums;
+﻿using DamLoad.Abstractions.Entities;
+using DamLoad.Abstractions.Enums;
 
 namespace DamLoad.Assets.Entities
 {
@@ -12,7 +12,7 @@ namespace DamLoad.Assets.Entities
         public string PublicUrl { get; set; } = string.Empty;
         public AssetType Type { get; set; }
         public long Bytes { get; set; }
-        public AssetStatus Status { get; set; }
+        public string Status { get; set; } = default!;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? DeletedAt { get; set; }

@@ -15,10 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Manifest\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\DamLoad.Abstractions\DamLoad.Abstractions.csproj" />
   </ItemGroup>
 

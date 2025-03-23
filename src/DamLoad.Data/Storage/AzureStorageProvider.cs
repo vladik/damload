@@ -85,17 +85,17 @@ namespace DamLoad.Data.Storage
             await RemoveAsync(currentName);
         }
 
-        public async Task SetAccessAsync(string assetName, bool isPublic)
+        public Task SetAccessAsync(string assetName, bool isPublic)
         {
             throw new NotImplementedException();
         }
 
-        public async Task SetExpirationAsync(string assetName, DateTime expirationDate)
+        public Task SetExpirationAsync(string assetName, DateTime expirationDate)
         {
             throw new NotImplementedException();
         }
 
-        public async Task CacheCdnUrl(string url)
+        public Task CacheCdnUrl(string url)
         {
             throw new NotImplementedException();
         }

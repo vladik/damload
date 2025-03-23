@@ -1,5 +1,5 @@
 ﻿using DamLoad.Abstractions.Modules;
-using DamLoad.Abstractions.Startup;
+using DamLoad.Abstractions.Hooks;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DamLoad.Assets

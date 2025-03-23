@@ -1,8 +1,7 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
-using DamLoad.Core.Enums;
 using System.Diagnostics;
-using AssetType = DamLoad.Core.Enums.AssetType;
+using AssetType = DamLoad.Abstractions.Enums.AssetType;
 
 namespace DamLoad.Transformation.Providers
 {
@@ -48,6 +47,5 @@ namespace DamLoad.Transformation.Providers
                 Height = request.Height
             };
         }
-
     }
 }

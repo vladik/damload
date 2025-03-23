@@ -1,4 +1,4 @@
-﻿using DamLoad.Core.Base.Entities;
+﻿using DamLoad.Abstractions.Entities;
 
 namespace DamLoad.Assets.Entities
 {
