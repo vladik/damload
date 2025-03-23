@@ -19,9 +19,9 @@ namespace DamLoad.Core.Modules
             foreach (var configFile in configFiles)
             {
                 var configFileName = Path.GetFileNameWithoutExtension(configFile); // e.g., DamLoad.Assets.config
-                var moduleKey = configFileName?.Replace(".config", "", StringComparison.OrdinalIgnoreCase); // DamLoad.Assets
+                var moduleIdentifier = configFileName?.Replace(".config", "", StringComparison.OrdinalIgnoreCase); // DamLoad.Assets
 
-                var dllPath = Path.Combine(basePath, $"{moduleKey}.dll");
+                var dllPath = Path.Combine(basePath, $"{moduleIdentifier}.dll");
                 if (!File.Exists(dllPath)) continue;
 
                 var assembly = Assembly.LoadFrom(dllPath);
@@ -52,9 +52,9 @@ namespace DamLoad.Core.Modules
                             services.AddSingleton(configType, configInstance);
                         }
 
-                        _registry.Register(moduleKey!, new ModuleMetadataModel
+                        _registry.Register(moduleIdentifier!, new ModuleMetadataModel
                         {
-                            Key = moduleKey!,
+                            Identifier = moduleIdentifier!,
                             ConfigFile = configFile
                         });
                     }
@@ -63,9 +63,9 @@ namespace DamLoad.Core.Modules
                 // Auto-register types that belong to this module (by namespace prefix)
                 foreach (var type in assembly.GetTypes())
                 {
-                    if (type.IsClass && type.FullName?.StartsWith(moduleKey!) == true)
+                    if (type.IsClass && type.Namespace?.StartsWith(moduleIdentifier!, StringComparison.OrdinalIgnoreCase) == true)
                     {
-                        _registry.RegisterType(type.FullName!, moduleKey!);
+                        _registry.RegisterType(type.FullName!, moduleIdentifier!);
                     }
                 }
             }

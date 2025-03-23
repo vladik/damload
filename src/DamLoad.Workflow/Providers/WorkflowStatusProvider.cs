@@ -10,11 +10,11 @@ public class WorkflowStatusProvider<T> : IWorkflowStatusProvider<T>
     {
         var typeName = typeof(T).FullName!;
 
-        if (!registry.TryGetModuleKeyForType(typeName, out var moduleKey))
+        if (!registry.TryGetModuleIdentifierForType(typeName, out var moduleIdentifier))
             throw new Exception($"No module registered for entity type: {typeName}");
 
-        if (!config.TryGetValue(moduleKey, out var def))
-            throw new Exception($"No workflow definition found for module: {moduleKey}");
+        if (!config.TryGetValue(moduleIdentifier, out var def))
+            throw new Exception($"No workflow definition found for module: {moduleIdentifier}");
 
         _definition = def;
     }

@@ -7,23 +7,23 @@ namespace DamLoad.Core.Modules
         private readonly Dictionary<string, ModuleMetadataModel> _moduleMetadata = new();
         private readonly Dictionary<string, string> _typeToModuleName = new();
 
-        public void Register(string moduleKey, ModuleMetadataModel metadata)
+        public void Register(string moduleIdentifier, ModuleMetadataModel metadata)
         {
-            _moduleMetadata[moduleKey] = metadata;
+            _moduleMetadata[moduleIdentifier] = metadata;
         }
 
-        public void RegisterType(string entityType, string moduleKey)
+        public void RegisterType(string entityType, string moduleIdentifier)
         {
-            _typeToModuleName[entityType] = moduleKey;
+            _typeToModuleName[entityType] = moduleIdentifier;
         }
 
         public IReadOnlyDictionary<string, ModuleMetadataModel> GetAllModules() => _moduleMetadata;
 
-        public bool TryGetModuleKeyForType(string entityType, out string key)
-            => _typeToModuleName.TryGetValue(entityType, out key!);
+        public bool TryGetModuleIdentifierForType(string entityType, out string identifier)
+            => _typeToModuleName.TryGetValue(entityType, out identifier!);
 
-        public ModuleMetadataModel? GetModuleMetadata(string key)
-            => _moduleMetadata.TryGetValue(key, out var meta) ? meta : null;
+        public ModuleMetadataModel? GetModuleMetadata(string identifier)
+            => _moduleMetadata.TryGetValue(identifier, out var meta) ? meta : null;
     }
 
 }

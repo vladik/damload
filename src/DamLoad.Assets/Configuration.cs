@@ -1,4 +1,5 @@
-﻿using DamLoad.Assets.Contracts;
+﻿using DamLoad.Abstractions.Startup;
+using DamLoad.Assets.Contracts;
 using DamLoad.Assets.Entities;
 using DamLoad.Assets.Repositories;
 using DamLoad.Assets.Services;
@@ -31,6 +32,9 @@ namespace DamLoad.Assets
             services.AddScoped<IAssetMetadataService, AssetMetadataService>();
             services.AddScoped<IAssetCustomDataRepository, AssetCustomDataRepository>();
             services.AddScoped<IAssetCustomDataService, AssetCustomDataService>();
+
+            services.AddSingleton<IStartupHook, StartupHook>();
+
             return services;
         }
     }
