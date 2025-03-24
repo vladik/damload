@@ -6,4 +6,24 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="damload.workflow.config.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="damload.workflow.config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FastEndpoints" Version="5.35.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DamLoad.Abstractions\DamLoad.Abstractions.csproj" />
+    <ProjectReference Include="..\DamLoad.Core\DamLoad.Core.csproj" />
+  </ItemGroup>
+
 </Project>

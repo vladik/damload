@@ -1,50 +1,52 @@
-using DamLoad.Core.Configurations;
+using DamLoad.Data.Storage.Providers;
+using DamLoad.Data.Storage;
+using Microsoft.Extensions.Configuration;
 
-namespace DamLoad.Data.Storage
+public class StorageFactory
 {
-    public class StorageFactory
+    private readonly string _connectionString;
+    private readonly IConfiguration _configuration;
+    private readonly StorageRootResolver _rootResolver;
+
+    public StorageFactory(string connectionString, IConfiguration configuration, StorageRootResolver rootResolver)
     {
-        private readonly string _connectionString;
-        private readonly ConfigurationService _configuration;
+        _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
+        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        _rootResolver = rootResolver ?? throw new ArgumentNullException(nameof(rootResolver));
+    }
 
-        public StorageFactory(string connectionString, ConfigurationService configurationService)
+    public IStorageProvider CreateStorageProvider()
+    {
+        if (string.IsNullOrWhiteSpace(_connectionString))
+            throw new InvalidOperationException("Storage connection string is missing.");
+
+        var storageType = DetectStorageType();
+
+        return storageType switch
         {
-            _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
-            _configuration = configurationService ?? throw new ArgumentNullException(nameof(configurationService));
-        }
+            StorageType.Azure => new AzureStorageProvider(_connectionString, _configuration, _rootResolver),
+            StorageType.Aws => throw new NotImplementedException("AWS S3 provider not yet implemented."),
+            _ => throw new InvalidOperationException("Unsupported or unknown storage provider.")
+        };
+    }
 
-        public IStorageProvider CreateStorageProvider()
-        {
-            if (string.IsNullOrWhiteSpace(_connectionString))
-            {
-                throw new InvalidOperationException("Storage connection string is missing.");
-            }
+    private StorageType DetectStorageType()
+    {
+        if (_connectionString.Contains("DefaultEndpointsProtocol=", StringComparison.OrdinalIgnoreCase) &&
+            _connectionString.Contains("AccountName=", StringComparison.OrdinalIgnoreCase))
+            return StorageType.Azure;
 
-            if (IsAzureStorage(_connectionString))
-            {
-                Console.WriteLine("Detected Azure Blob Storage as the storage provider.");
-                return new AzureStorageProvider(_connectionString, _configuration);
-            }
+        if (_connectionString.Contains("AWSAccessKeyId=", StringComparison.OrdinalIgnoreCase) &&
+            _connectionString.Contains("AWSSecretKey=", StringComparison.OrdinalIgnoreCase))
+            return StorageType.Aws;
 
-            if (IsAwsS3(_connectionString))
-            {
-                Console.WriteLine("Detected AWS S3 as the storage provider.");
-                //return new AwsS3StorageProvider(_connectionString, _configuration);
-            }
+        return StorageType.Unknown;
+    }
 
-            throw new InvalidOperationException("Unsupported storage provider. Connection string format not recognized.");
-        }
-
-        private bool IsAzureStorage(string connectionString)
-        {
-            return connectionString.Contains("DefaultEndpointsProtocol=", StringComparison.OrdinalIgnoreCase) &&
-                   connectionString.Contains("AccountName=", StringComparison.OrdinalIgnoreCase);
-        }
-
-        private bool IsAwsS3(string connectionString)
-        {
-            return connectionString.Contains("AWSAccessKeyId=", StringComparison.OrdinalIgnoreCase) &&
-                   connectionString.Contains("AWSSecretKey=", StringComparison.OrdinalIgnoreCase);
-        }
+    private enum StorageType
+    {
+        Unknown,
+        Azure,
+        Aws
     }
 }

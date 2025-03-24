@@ -1,4 +1,4 @@
-﻿using DamLoad.Core.Enums;
+﻿using DamLoad.Abstractions.Enums;
 
 namespace DamLoad.Transformation
 {

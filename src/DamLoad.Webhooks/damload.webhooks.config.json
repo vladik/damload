@@ -1,0 +1,14 @@
+{
+  "subscriptions": [
+    {
+      "eventType": "AssetCreated",
+      "targetUrl": "https://webhook.site/your-test-url",
+      "secret": "your-webhook-secret"
+    },
+    {
+      "eventType": "AssetUpdated",
+      "targetUrl": "https://webhook.site2/your-test-url",
+      "secret": "your-webhook-secret2"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-﻿using DamLoad.Core.Enums;
+﻿using DamLoad.Abstractions.Enums;
 using DamLoad.Transformation;
 using DamLoad.Transformation.Providers;
 using System.Diagnostics;

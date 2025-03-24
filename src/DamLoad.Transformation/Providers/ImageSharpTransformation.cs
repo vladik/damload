@@ -1,4 +1,4 @@
-﻿using DamLoad.Core.Enums;
+﻿using DamLoad.Abstractions.Enums;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 
