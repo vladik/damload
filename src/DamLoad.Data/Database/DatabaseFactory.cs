@@ -3,6 +3,7 @@ using Npgsql;
 using System.Data;
 
 namespace DamLoad.Data.Database;
+
 public class DatabaseFactory
 {
     private readonly string _connectionString;
@@ -15,27 +16,42 @@ public class DatabaseFactory
     public IDbConnection CreateConnection()
     {
         if (string.IsNullOrWhiteSpace(_connectionString))
-        {
             throw new InvalidOperationException("Database connection string is missing.");
-        }
 
-        if (_connectionString.Contains("Server=", StringComparison.OrdinalIgnoreCase) ||
-            _connectionString.Contains("Data Source=", StringComparison.OrdinalIgnoreCase))
+        return GetDbType() switch
         {
-            return new SqlConnection(_connectionString); // MSSQL
-        }
-
-        if (_connectionString.Contains("Host=", StringComparison.OrdinalIgnoreCase))
-        {
-            return new NpgsqlConnection(_connectionString); // PostgreSQL
-        }
-
-        throw new InvalidOperationException("Unsupported database type. Connection string format not recognized.");
+            DbType.MsSql => new SqlConnection(_connectionString),
+            DbType.PostgreSql => new NpgsqlConnection(_connectionString),
+            _ => throw new InvalidOperationException("Unsupported database type.")
+        };
     }
+
     public string GetDbUtcNow()
     {
-        return _connectionString.Contains("Server=", StringComparison.OrdinalIgnoreCase) ? "GETUTCDATE()" // MSSQL
-             : _connectionString.Contains("Host=", StringComparison.OrdinalIgnoreCase) ? "NOW() AT TIME ZONE 'UTC'" // PostgreSQL
-             : throw new InvalidOperationException("Unsupported database type.");
+        return GetDbType() switch
+        {
+            DbType.MsSql => "GETUTCDATE()",
+            DbType.PostgreSql => "NOW() AT TIME ZONE 'UTC'",
+            _ => throw new InvalidOperationException("Unsupported database type.")
+        };
+    }
+
+    private DbType GetDbType()
+    {
+        if (_connectionString.Contains("Server=", StringComparison.OrdinalIgnoreCase) ||
+            _connectionString.Contains("Data Source=", StringComparison.OrdinalIgnoreCase))
+            return DbType.MsSql;
+
+        if (_connectionString.Contains("Host=", StringComparison.OrdinalIgnoreCase))
+            return DbType.PostgreSql;
+
+        return DbType.Unknown;
+    }
+
+    private enum DbType
+    {
+        Unknown,
+        MsSql,
+        PostgreSql
     }
 }
