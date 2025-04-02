@@ -57,22 +57,22 @@ public class UploadAsset : Endpoint<UploadAssetRequest, UploadAssetResponse, Upl
         await using var stream = file.OpenReadStream();
         await _storage.UploadAsync(stream, assetName, req.ContentType, status);
 
-        var model = Map.ToEntity(req);
-        model.Id = assetId;
-        model.PublicId = publicId;
-        model.Url = assetName;
-        model.Status = status;
-        model.ContentType = req.ContentType;
-        model.Extension = req.Extension;
+        var entity = Map.ToEntity(req);
+        entity.Id = assetId;
+        entity.PublicId = publicId;
+        entity.Url = assetName;
+        entity.Status = status;
+        entity.ContentType = req.ContentType;
+        entity.Extension = req.Extension;
 
-        await _repository.AddAsync(model);
+        await _repository.AddAsync(entity);
 
         await _eventBus.PublishAsync(new EntityEvent<AssetModel>
         {
             Identifier = "damload.assets:created",
-            Data = DamLoad.Assets.Mappers.AssetMapper.ToModel(model)
+            Data = DamLoad.Assets.Mappers.AssetMapper.ToModel(entity)
         });
 
-        await SendAsync(Map.FromEntity(model), cancellation: ct);
+        await SendAsync(Map.FromEntity(entity), cancellation: ct);
     }
 }
