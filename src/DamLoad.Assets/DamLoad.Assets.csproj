@@ -33,4 +33,9 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Api\V1\Collections\" />
+    <Folder Include="Api\V1\Folders\" />
+  </ItemGroup>
+
 </Project>

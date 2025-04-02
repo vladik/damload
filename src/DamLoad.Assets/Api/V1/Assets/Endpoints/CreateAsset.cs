@@ -1,12 +1,9 @@
 ﻿using DamLoad.Abstractions.Events;
 using DamLoad.Abstractions.Models;
-using DamLoad.Abstractions.Workflow;
 using DamLoad.Abstractions.Workflow.Providers;
-using DamLoad.Assets.Entities;
-using DamLoad.Assets.Services;
 using FastEndpoints;
 
-namespace DamLoad.Assets.Api.Endpoints
+namespace DamLoad.Assets.Api.Assets.Endpoints
 {
     public class CreateAsset : EndpointWithoutRequest
     {
