@@ -1,10 +1,6 @@
 using DamLoad.Abstractions.Events;
 using DamLoad.Abstractions.Models;
 using DamLoad.Abstractions.Workflow.Providers;
-using DamLoad.Assets.Api.Assets.Mappers;
-using DamLoad.Assets.Api.Assets.Requests;
-using DamLoad.Assets.Api.Assets.Responses;
-using DamLoad.Assets.Api.Assets.Validators;
 using DamLoad.Assets.Api.V1.Assets.Mappers;
 using DamLoad.Assets.Api.V1.Assets.Requests;
 using DamLoad.Assets.Api.V1.Assets.Responses;
@@ -70,7 +66,7 @@ public class UploadAsset : Endpoint<UploadAssetRequest, UploadAssetResponse, Upl
         await _eventBus.PublishAsync(new EntityEvent<AssetModel>
         {
             Identifier = "damload.assets:created",
-            Data = DamLoad.Assets.Mappers.AssetMapper.ToModel(entity)
+            Data = DamLoad.Assets.Mappers.GetAssetMapper.ToModel(entity)
         });
 
         await SendAsync(Map.FromEntity(entity), cancellation: ct);

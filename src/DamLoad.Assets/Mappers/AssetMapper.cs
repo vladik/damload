@@ -3,7 +3,7 @@ using DamLoad.Assets.Entities;
 
 namespace DamLoad.Assets.Mappers;
 
-public static class AssetMapper
+public static class GetAssetMapper
 {
     public static AssetModel ToModel(this AssetEntity e) => new()
     {
