@@ -7,6 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Api\V1\Collections\**" />
+    <Compile Remove="Api\V1\Folders\**" />
+    <EmbeddedResource Remove="Api\V1\Collections\**" />
+    <EmbeddedResource Remove="Api\V1\Folders\**" />
+    <None Remove="Api\V1\Collections\**" />
+    <None Remove="Api\V1\Folders\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="damload.assets.config.json" />
   </ItemGroup>
 
@@ -31,11 +40,6 @@
     <Content Update="damload.assets.config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Api\V1\Collections\" />
-    <Folder Include="Api\V1\Folders\" />
   </ItemGroup>
 
 </Project>
