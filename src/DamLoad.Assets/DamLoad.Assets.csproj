@@ -8,11 +8,8 @@
 
   <ItemGroup>
     <Compile Remove="Api\V1\Collections\**" />
-    <Compile Remove="Api\V1\Folders\**" />
     <EmbeddedResource Remove="Api\V1\Collections\**" />
-    <EmbeddedResource Remove="Api\V1\Folders\**" />
     <None Remove="Api\V1\Collections\**" />
-    <None Remove="Api\V1\Folders\**" />
   </ItemGroup>
 
   <ItemGroup>
