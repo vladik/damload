@@ -7,12 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Api\V1\Collections\**" />
-    <EmbeddedResource Remove="Api\V1\Collections\**" />
-    <None Remove="Api\V1\Collections\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="damload.assets.config.json" />
   </ItemGroup>
 
