@@ -12,6 +12,8 @@ namespace DamLoad.Classify.Services
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
+        public async Task<SchemeEntity?> GetByIdAsync(Guid id) =>
+            await _repository.GetByIdAsync(id);
         public async Task<List<SchemeEntity>> GetAllAsync() =>
             await _repository.GetAllAsync();
 

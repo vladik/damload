@@ -28,7 +28,9 @@ namespace DamLoad.Classify.Api.V1.Schemes.Mappers
             Sortable = e.Sortable,
             Repeatable = e.Repeatable,
             Hierarchical = e.Hierarchical,
-            Properties = e.Properties
+            Properties = e.Properties,
+            CreatedAt = e.CreatedAt,
+            UpdatedAt = e.UpdatedAt
         };
     }
 

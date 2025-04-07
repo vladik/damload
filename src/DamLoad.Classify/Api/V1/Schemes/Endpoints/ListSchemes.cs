@@ -1,16 +1,15 @@
 ﻿using DamLoad.Classify.Api.V1.Schemes.Mappers;
 using DamLoad.Classify.Api.V1.Schemes.Responses;
-using DamLoad.Classify.Entities;
 using DamLoad.Classify.Services;
 using FastEndpoints;
 
 namespace DamLoad.Classify.Api.V1.Schemes.Endpoints
 {
-    public class GetAllSchemes : EndpointWithoutRequest<List<SchemeResponse>, SchemeListMapper>
+    public class ListSchemes : EndpointWithoutRequest<List<SchemeResponse>, ListSchemeMapper>
     {
         private readonly ISchemeService _schemeService;
 
-        public GetAllSchemes(ISchemeService schemeService) => _schemeService = schemeService;
+        public ListSchemes(ISchemeService schemeService) => _schemeService = schemeService;
 
         public override void Configure()
         {
@@ -21,7 +20,8 @@ namespace DamLoad.Classify.Api.V1.Schemes.Endpoints
         public override async Task HandleAsync(CancellationToken ct)
         {
             var result = await _schemeService.GetAllAsync();
-            await SendMappedAsync(result);
+            var response = Map.FromEntity(result);
+            await SendAsync(response);
         }
     }
 }

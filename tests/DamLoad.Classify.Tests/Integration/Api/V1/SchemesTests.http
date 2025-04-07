@@ -1,0 +1,85 @@
+### Get all schemes
+GET https://localhost:7178/api/v1/classify/schemes
+Accept: application/json
+
+
+### Create a new scheme
+POST https://localhost:7178/api/v1/classify/schemes
+Content-Type: application/json
+
+{
+  "slug": "product-tags-3",
+  "label": "Product Tags 3",
+  "editable": true,
+  "repeatable": true,
+  "hierarchical": false,
+  "sortable": true,
+  "properties": "{}"
+}
+
+
+### Create another scheme (for sorting)
+POST https://localhost:7178/api/v1/classify/schemes
+Content-Type: application/json
+
+{
+  "slug": "status-1",
+  "label": "Workflow Status",
+  "editable": false,
+  "repeatable": false,
+  "hierarchical": false,
+  "sortable": true,
+  "properties": "{\"color\":\"green\"}"
+}
+
+
+### Get a scheme by slug (new route style)
+GET https://localhost:7178/api/v1/classify/schemes/slug/status
+Accept: application/json
+
+
+### Update an existing scheme (by ID is preferred now)
+PUT https://localhost:7178/api/v1/classify/schemes/93873e85-8cd0-4712-981a-90ebbd9fcac6  // Replace {id} with actual GUID
+Content-Type: application/json
+
+{
+  "slug": "status",
+  "label": "Workflow Status (Updated)",
+  "editable": true,
+  "repeatable": false,
+  "hierarchical": false,
+  "sortable": false,
+  "properties": "{\"color\":\"blue\"}"
+}
+
+
+### Delete a scheme by ID
+DELETE https://localhost:7178/api/v1/classify/schemes/93873e85-8cd0-4712-981a-90ebbd9fcac6  // Replace {id} with actual GUID
+Accept: application/json
+
+
+### Try to get deleted scheme by slug
+GET https://localhost:7178/api/v1/classify/schemes/slug/status
+Accept: application/json
+
+### Missing required slug field
+POST https://localhost:7178/api/v1/classify/schemes
+Content-Type: application/json
+
+{
+  "label": "Missing Slug Test",
+  "editable": true,
+  "repeatable": true,
+  "hierarchical": false,
+  "sortable": true,
+  "properties": "{}"
+}
+
+### Invalid JSON (syntax error)
+POST https://localhost:7178/api/v1/classify/schemes
+Content-Type: application/json
+
+{
+
+}
+

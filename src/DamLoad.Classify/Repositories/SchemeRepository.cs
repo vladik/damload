@@ -1,7 +1,9 @@
-﻿using DamLoad.Classify.Entities;
+﻿using DamLoad.Abstractions.Exceptions;
+using DamLoad.Classify.Entities;
 using DamLoad.Data.Database;
 using Dapper;
 using System.Data;
+using System.Data.Common;
 
 namespace DamLoad.Classify.Repositories
 {
@@ -19,21 +21,21 @@ namespace DamLoad.Classify.Repositories
         public async Task<SchemeEntity?> GetByIdAsync(Guid id)
         {
             using var db = GetConnection();
-            string sql = "SELECT * FROM schemes WHERE id = @Id";
+            string sql = "SELECT * FROM classify_schemes WHERE id = @Id";
             return await db.QueryFirstOrDefaultAsync<SchemeEntity>(sql, new { Id = id });
         }
 
         public async Task<SchemeEntity?> GetBySlugAsync(string slug)
         {
             using var db = GetConnection();
-            string sql = "SELECT * FROM schemes WHERE slug = @Slug";
+            string sql = "SELECT * FROM classify_schemes WHERE slug = @Slug";
             return await db.QueryFirstOrDefaultAsync<SchemeEntity>(sql, new { Slug = slug });
         }
 
         public async Task<List<SchemeEntity>> GetAllAsync()
         {
             using var db = GetConnection();
-            string sql = "SELECT * FROM schemes ORDER BY slug ASC";
+            string sql = "SELECT * FROM classify_schemes ORDER BY slug ASC";
             return (await db.QueryAsync<SchemeEntity>(sql)).ToList();
         }
 
@@ -41,18 +43,26 @@ namespace DamLoad.Classify.Repositories
         {
             using var db = GetConnection();
             string dbUtcNow = _databaseFactory.GetDbUtcNow();
-            string sql = $@"INSERT INTO schemes 
+            string sql = $@"INSERT INTO classify_schemes 
                 (id, slug, label, editable, sortable, repeatable, hierarchical, properties, created_at, updated_at) 
                 VALUES 
                 (@Id, @Slug, @Label, @Editable, @Sortable, @Repeatable, @Hierarchical, @Properties, {dbUtcNow}, {dbUtcNow})";
-            await db.ExecuteAsync(sql, scheme);
+
+            try
+            {
+                await db.ExecuteAsync(sql, scheme);
+            }
+            catch (DbException ex) when (DatabaseErrorResolver.IsUniqueViolation(ex))
+            {
+                throw new ConflictException($"A scheme with slug '{scheme.Slug}' already exists.");
+            }
         }
 
         public async Task UpdateAsync(SchemeEntity scheme)
         {
             using var db = GetConnection();
             string dbUtcNow = _databaseFactory.GetDbUtcNow();
-            string sql = $@"UPDATE schemes SET
+            string sql = $@"UPDATE classify_schemes SET
                 slug = @Slug,
                 label = @Label,
                 editable = @Editable,
@@ -68,7 +78,7 @@ namespace DamLoad.Classify.Repositories
         public async Task DeleteAsync(Guid id)
         {
             using var db = GetConnection();
-            string sql = "DELETE FROM schemes WHERE id = @Id";
+            string sql = "DELETE FROM classify_schemes WHERE id = @Id";
             await db.ExecuteAsync(sql, new { Id = id });
         }
     }

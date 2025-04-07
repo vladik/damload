@@ -33,6 +33,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DamLoad.Assets", "DamLoad.A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DamLoad.Classify", "DamLoad.Classify\DamLoad.Classify.csproj", "{53273FBB-66A5-4D90-94B1-B002DE8EF99E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B1D27CE6-394D-4B6B-83CC-1A32951C2213}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DamLoad.Classify.Tests", "..\tests\DamLoad.Classify.Tests\DamLoad.Classify.Tests.csproj", "{7CC9121F-2BEA-466E-97E7-BD5B82A6F104}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +91,10 @@ Global
 		{53273FBB-66A5-4D90-94B1-B002DE8EF99E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53273FBB-66A5-4D90-94B1-B002DE8EF99E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53273FBB-66A5-4D90-94B1-B002DE8EF99E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CC9121F-2BEA-466E-97E7-BD5B82A6F104}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CC9121F-2BEA-466E-97E7-BD5B82A6F104}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CC9121F-2BEA-466E-97E7-BD5B82A6F104}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CC9121F-2BEA-466E-97E7-BD5B82A6F104}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,6 +112,7 @@ Global
 		{0E285AD6-6DFF-4081-9201-B564B1E282B0} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{CEEFABFA-E1DB-43CA-8005-104B2FA944C5} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{53273FBB-66A5-4D90-94B1-B002DE8EF99E} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{7CC9121F-2BEA-466E-97E7-BD5B82A6F104} = {B1D27CE6-394D-4B6B-83CC-1A32951C2213}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A09D05F4-3704-4BF7-A1A5-C4B0B374DDD6}

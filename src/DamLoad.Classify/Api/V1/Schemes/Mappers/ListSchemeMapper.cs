@@ -4,7 +4,7 @@ using FastEndpoints;
 
 namespace DamLoad.Classify.Api.V1.Schemes.Mappers
 {
-    public class SchemeListMapper : ResponseMapper<List<SchemeResponse>, List<SchemeEntity>>
+    public class ListSchemeMapper : ResponseMapper<List<SchemeResponse>, List<SchemeEntity>>
     {
         public override List<SchemeResponse> FromEntity(List<SchemeEntity> entities) =>
             entities.Select(e => new SchemeResponse
@@ -16,7 +16,9 @@ namespace DamLoad.Classify.Api.V1.Schemes.Mappers
                 Sortable = e.Sortable,
                 Repeatable = e.Repeatable,
                 Hierarchical = e.Hierarchical,
-                Properties = e.Properties
+                Properties = e.Properties,
+                CreatedAt = e.CreatedAt,
+                UpdatedAt = e.UpdatedAt
             }).ToList();
     }
 

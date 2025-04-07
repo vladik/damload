@@ -1,10 +1,22 @@
+using DamLoad.Api.Processors;
 using DamLoad.Core.Hooks.Shutdown;
 using DamLoad.Core.Hooks.Startup;
 using DamLoad.Core.Modules;
+using DamLoad.Data.Database;
 using DamLoad.Data.Storage;
 using FastEndpoints;
 
 var builder = WebApplication.CreateBuilder();
+
+
+// Database
+builder.Services.AddSingleton(db =>
+{
+    var config = db.GetRequiredService<IConfiguration>();
+    var connectionString = config.GetConnectionString("DatabaseConnection");
+
+    return new DatabaseFactory(connectionString!);
+});
 
 // Storage
 builder.Services.AddSingleton<StorageRootResolver>();
@@ -34,6 +46,13 @@ app.Lifetime.ApplicationStopping.Register(() =>
     ShutdownHookRunner.RunAsync(scope.ServiceProvider).GetAwaiter().GetResult();
 });
 
-app.UseFastEndpoints();
+app.UseDefaultExceptionHandler();
+app.UseFastEndpoints(config =>
+{
+    config.Endpoints.Configurator = ep =>
+    {
+        ep.PostProcessor<ExceptionProcessor>(Order.After);
+    };
+});
 
 app.Run();

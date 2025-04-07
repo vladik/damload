@@ -2,9 +2,9 @@
 
 namespace DamLoad.Classify.Api.V1.Schemes.Requests
 {
-    public class GetSchemeRequest
+    public class GetSchemeBySlugRequest
     {
         [FromRoute]
-        public Guid Id { get; set; }
+        public string Slug { get; set; } = string.Empty;
     }
 }

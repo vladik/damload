@@ -6,21 +6,21 @@ using FastEndpoints;
 
 namespace DamLoad.Classify.Api.V1.Schemes.Endpoints
 {
-    public class GetScheme : Endpoint<GetSchemeRequest, SchemeResponse, SchemeMapper>
+    public class GetSchemeBySlug : Endpoint<GetSchemeBySlugRequest, SchemeResponse, SchemeMapper>
     {
         private readonly ISchemeService _schemeService;
 
-        public GetScheme(ISchemeService schemeService) => _schemeService = schemeService;
+        public GetSchemeBySlug(ISchemeService schemeService) => _schemeService = schemeService;
 
         public override void Configure()
         {
-            Get("/api/v1/classify/schemes/{id:guid}");
+            Get("/api/v1/classify/schemes/slug/{slug}");
             AllowAnonymous();
         }
 
-        public override async Task HandleAsync(GetSchemeRequest req, CancellationToken ct)
+        public override async Task HandleAsync(GetSchemeBySlugRequest req, CancellationToken ct)
         {
-            var scheme = await _schemeService.GetByIdAsync(req.Id);
+            var scheme = await _schemeService.GetBySlugAsync(req.Slug);
             if (scheme is null)
             {
                 await SendNotFoundAsync();
