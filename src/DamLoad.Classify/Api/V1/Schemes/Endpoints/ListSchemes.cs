@@ -19,8 +19,8 @@ namespace DamLoad.Classify.Api.V1.Schemes.Endpoints
 
         public override async Task HandleAsync(CancellationToken ct)
         {
-            var result = await _schemeService.GetAllAsync();
-            var response = Map.FromEntity(result);
+            var entities = await _schemeService.GetAllAsync();
+            var response = Map.FromEntity(entities);
             await SendAsync(response);
         }
     }

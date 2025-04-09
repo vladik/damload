@@ -1,0 +1,42 @@
+### Get all classifiers
+GET https://localhost:7178/api/v1/classify/classifiers
+Accept: application/json
+
+### Create a new classifier
+POST https://localhost:7178/api/v1/classify/classifiers
+Content-Type: application/json
+
+{
+  "schemeId": "00000000-0000-0000-0000-000000000001",
+  "slug": "draft",
+  "label": "Draft",
+  "properties": "{}",
+  "sortOrder": 1
+}
+
+### Get classifier by ID
+GET https://localhost:7178/api/v1/classify/classifiers/00000000-0000-0000-0000-000000000010
+Accept: application/json
+
+### Get classifier by slug
+GET https://localhost:7178/api/v1/classify/classifiers/slug/draft
+Accept: application/json
+
+### Get classifier by scheme and slug
+GET https://localhost:7178/api/v1/classify/classifiers/scheme/00000000-0000-0000-0000-000000000001/slug/draft
+Accept: application/json
+
+### Update a classifier
+PUT https://localhost:7178/api/v1/classify/classifiers/00000000-0000-0000-0000-000000000010
+Content-Type: application/json
+
+{
+  "slug": "draft",
+  "label": "Draft Updated",
+  "properties": "{ \"color\": \"blue\" }",
+  "sortOrder": 2
+}
+
+### Delete a classifier
+DELETE https://localhost:7178/api/v1/classify/classifiers/00000000-0000-0000-0000-000000000010
+Accept: application/json
