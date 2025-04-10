@@ -1,10 +1,15 @@
-﻿using DamLoad.Classify.Api.V1.Classifiers.Responses;
+﻿using DamLoad.Classify.Api.V1.Classifiers.Mappers;
+using DamLoad.Classify.Api.V1.Classifiers.Requests;
+using DamLoad.Classify.Api.V1.Classifiers.Responses;
+using DamLoad.Classify.Api.V1.Schemes.Mappers;
+using DamLoad.Classify.Api.V1.Schemes.Requests;
+using DamLoad.Classify.Api.V1.Schemes.Responses;
 using DamLoad.Classify.Services;
 using FastEndpoints;
 
 namespace DamLoad.Classify.Api.V1.Classifiers.Endpoints;
 
-public class GetClassifier : EndpointWithoutRequest<ClassifierResponse>
+public class GetClassifier : Endpoint<GetClassifierRequest, ClassifierResponse, ClassifierMapper>
 {
     private readonly IClassifierService _service;
 
@@ -16,26 +21,15 @@ public class GetClassifier : EndpointWithoutRequest<ClassifierResponse>
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(CancellationToken ct)
+    public override async Task HandleAsync(GetClassifierRequest req, CancellationToken ct)
     {
-        var id = Route<Guid>("id");
-        var entity = await _service.GetByIdAsync(id);
+        var entity = await _service.GetByIdAsync(req.Id);
         if (entity is null)
         {
             await SendNotFoundAsync();
             return;
         }
-        var response = new ClassifierResponse
-        {
-            Id = entity.Id,
-            SchemeId = entity.SchemeId,
-            Slug = entity.Slug,
-            Label = entity.Label,
-            Properties = entity.Properties,
-            SortOrder = entity.SortOrder,
-            CreatedAt = entity.CreatedAt,
-            UpdatedAt = entity.UpdatedAt
-        };
-        await SendAsync(response);
+
+        await SendAsync(Map.FromEntity(entity));
     }
 }

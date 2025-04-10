@@ -38,13 +38,39 @@ namespace DamLoad.Api.Processors {
             return ex switch
             {
                 ValidationException ve => (400, new ExceptionResponse(ve.Errors.ToList())),
-                ConflictException => (409, new ExceptionResponse { StatusCode = 409, Message = ex.Message }),
-                ArgumentException => (400, new ExceptionResponse { StatusCode = 400, Message = ex.Message }),
-                DbException dbEx when DatabaseErrorResolver.IsUniqueViolation(dbEx) =>
-                    (409, new ExceptionResponse { StatusCode = 409, Message = "Duplicate record violates a unique constraint." }),
-                _ => (500, new ExceptionResponse { StatusCode = 500, Message = "An unexpected error occurred." })
+
+                ConflictException => (409, new ExceptionResponse
+                {
+                    StatusCode = 409,
+                    Message = ex.Message
+                }),
+
+                ArgumentException => (400, new ExceptionResponse
+                {
+                    StatusCode = 400,
+                    Message = ex.Message
+                }),
+
+                DbException dbEx when DatabaseErrorResolver.IsUniqueViolation(dbEx) => (409, new ExceptionResponse
+                {
+                    StatusCode = 409,
+                    Message = "Duplicate record violates a unique constraint."
+                }),
+
+                DbException dbEx when DatabaseErrorResolver.IsForeignKeyViolation(dbEx) => (400, new ExceptionResponse
+                {
+                    StatusCode = 400,
+                    Message = "Invalid reference. Make sure the related record exists."
+                }),
+
+                _ => (500, new ExceptionResponse
+                {
+                    StatusCode = 500,
+                    Message = "An unexpected error occurred."
+                })
             };
         }
+
     }
 }
 

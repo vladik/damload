@@ -7,27 +7,31 @@ POST https://localhost:7178/api/v1/classify/classifiers
 Content-Type: application/json
 
 {
-  "schemeId": "00000000-0000-0000-0000-000000000001",
-  "slug": "draft",
-  "label": "Draft",
+  "schemeId": "2fd97c76-ff95-4e98-94c5-08dfb22100c6",
+  "slug": "published",
+  "label": "Published",
   "properties": "{}",
   "sortOrder": 1
 }
 
 ### Get classifier by ID
-GET https://localhost:7178/api/v1/classify/classifiers/00000000-0000-0000-0000-000000000010
+GET https://localhost:7178/api/v1/classify/classifiers/ef2ff602-9c14-4ece-affb-2dc7df1faab5
 Accept: application/json
 
 ### Get classifier by slug
 GET https://localhost:7178/api/v1/classify/classifiers/slug/draft
 Accept: application/json
 
+### Get classifiers by scheme ID
+GET https://localhost:7178/api/v1/classify/classifiers/scheme/2fd97c76-ff95-4e98-94c5-08dfb22100c6
+Accept: application/json
+
 ### Get classifier by scheme and slug
-GET https://localhost:7178/api/v1/classify/classifiers/scheme/00000000-0000-0000-0000-000000000001/slug/draft
+GET https://localhost:7178/api/v1/classify/classifiers/scheme/2fd97c76-ff95-4e98-94c5-08dfb22100c6/slug/draft
 Accept: application/json
 
 ### Update a classifier
-PUT https://localhost:7178/api/v1/classify/classifiers/00000000-0000-0000-0000-000000000010
+PUT https://localhost:7178/api/v1/classify/classifiers/ef2ff602-9c14-4ece-affb-2dc7df1faab5
 Content-Type: application/json
 
 {
@@ -38,5 +42,5 @@ Content-Type: application/json
 }
 
 ### Delete a classifier
-DELETE https://localhost:7178/api/v1/classify/classifiers/00000000-0000-0000-0000-000000000010
+DELETE https://localhost:7178/api/v1/classify/classifiers/f71d3548-cfcf-4744-a755-80cbc463204d
 Accept: application/json

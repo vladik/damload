@@ -19,5 +19,16 @@ namespace DamLoad.Data.Database
                 _ => false
             };
         }
+        public static bool IsForeignKeyViolation(DbException ex)
+        {
+            return ex switch
+            {
+                PostgresException pg when pg.SqlState == "23503" => true,
+                SqlException sql when sql.Number == 547 => true,
+                // MySqlException my when my.Number == 1452 => true,
+                // SQLiteException sq when sq.Message.Contains("FOREIGN KEY constraint failed") => true,
+                _ => false
+            };
+        }
     }
 }

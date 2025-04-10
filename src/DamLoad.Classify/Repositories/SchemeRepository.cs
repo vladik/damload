@@ -47,15 +47,7 @@ namespace DamLoad.Classify.Repositories
                 (id, slug, label, editable, sortable, repeatable, hierarchical, properties, created_at, updated_at) 
                 VALUES 
                 (@Id, @Slug, @Label, @Editable, @Sortable, @Repeatable, @Hierarchical, @Properties, {dbUtcNow}, {dbUtcNow})";
-
-            try
-            {
-                await db.ExecuteAsync(sql, scheme);
-            }
-            catch (DbException ex) when (DatabaseErrorResolver.IsUniqueViolation(ex))
-            {
-                throw new ConflictException($"A scheme with slug '{scheme.Slug}' already exists.");
-            }
+            await db.ExecuteAsync(sql, scheme);
         }
 
         public async Task UpdateAsync(SchemeEntity scheme)

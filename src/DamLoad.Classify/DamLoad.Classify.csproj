@@ -21,4 +21,8 @@
     <ProjectReference Include="..\DamLoad.Data\DamLoad.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Api\V1\Classifications\Endpoints\" />
+  </ItemGroup>
+
 </Project>

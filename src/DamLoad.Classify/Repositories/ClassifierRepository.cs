@@ -1,7 +1,9 @@
-﻿using DamLoad.Classify.Entities;
+﻿using DamLoad.Abstractions.Exceptions;
+using DamLoad.Classify.Entities;
 using DamLoad.Data.Database;
 using Dapper;
 using System.Data;
+using System.Data.Common;
 
 namespace DamLoad.Classify.Repositories
 {
@@ -57,7 +59,9 @@ namespace DamLoad.Classify.Repositories
                 (id, scheme_id, slug, label, sort_order, properties, created_at, updated_at)
                 VALUES
                 (@Id, @SchemeId, @Slug, @Label, @SortOrder, @Properties, {dbUtcNow}, {dbUtcNow})";
+
             await db.ExecuteAsync(sql, classifier);
+
         }
 
         public async Task UpdateAsync(ClassifierEntity classifier)
