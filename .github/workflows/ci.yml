@@ -28,4 +28,4 @@ jobs:
       run: dotnet build src/DamLoad.sln --no-restore --configuration Release
 
     - name: Run tests
-      run: dotnet test src/DamLoad.sln --no-build --configuration Release --verbosity normal
+      run: dotnet test src/DamLoad.sln --configuration Release --verbosity normal
