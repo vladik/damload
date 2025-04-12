@@ -12,6 +12,9 @@ namespace DamLoad.Assets.Services
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
+        public async Task<TagEntity?> GetByIdAsync(Guid id) =>
+            await _repository.GetByIdAsync(id);
+
         public async Task<List<TagEntity>> GetAllAsync() =>
             await _repository.GetAllAsync();
 

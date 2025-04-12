@@ -4,6 +4,7 @@ namespace DamLoad.Assets.Services
 {
     public interface ITagService
     {
+        Task<TagEntity?> GetByIdAsync(Guid id);
         Task<List<TagEntity>> GetAllAsync();
         Task AddAsync(TagEntity tag);
         Task RenameAsync(Guid tagId, string newName);

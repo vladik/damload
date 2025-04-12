@@ -1,0 +1,31 @@
+### Assign classifiers to a resource
+POST https://localhost:7178/api/v1/classify/classifications
+Content-Type: application/json
+
+{
+  "resourceId": "xyz",
+  "classifierIds": [
+    "73b44ef4-d2d1-4fe0-853d-2593e1ab2992",
+    "ef2ff602-9c14-4ece-affb-2dc7df1faab5"
+  ]
+}
+
+### Get classifiers by resource
+GET https://localhost:7178/api/v1/classify/classifications/resource/xyz
+
+### Get all classifications by classifier slug
+GET https://localhost:7178/api/v1/classify/classifications/classifier/slug/published
+
+### Remove specific classifiers from a resource
+DELETE https://localhost:7178/api/v1/classify/classifications
+Content-Type: application/json
+
+{
+  "resourceId": "11111111-1111-1111-1111-111111111111",
+  "classifierIds": [
+    "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+  ]
+}
+
+### Get resources by classifier
+GET https://localhost:7178/api/v1/classify/classifications/classifier/ef2ff602-9c14-4ece-affb-2dc7df1faab5

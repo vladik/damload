@@ -11,6 +11,8 @@ namespace DamLoad.Assets.Entities
         public string Url { get; set; } = string.Empty;
         public string PublicUrl { get; set; } = string.Empty;
         public AssetType Type { get; set; }
+        public string ContentType { get; set; } = null!;
+        public string Extension { get; set; } = null!;
         public long Bytes { get; set; }
         public string Status { get; set; } = default!;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

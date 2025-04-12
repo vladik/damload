@@ -20,6 +20,13 @@ namespace DamLoad.Assets.Repositories
 
         private IDbConnection GetConnection() => _databaseFactory.CreateConnection();
 
+        public async Task<TagEntity?> GetByIdAsync(Guid id)
+        {
+            using var db = GetConnection();
+            string sql = "SELECT * FROM tags WHERE id = @Id";
+            return await db.QueryFirstOrDefaultAsync<TagEntity>(sql, new { Id = id });
+        }
+
         public async Task<List<TagEntity>> GetAllAsync()
         {
             using var db = GetConnection();

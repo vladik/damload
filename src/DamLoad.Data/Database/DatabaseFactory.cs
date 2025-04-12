@@ -18,6 +18,8 @@ public class DatabaseFactory
         if (string.IsNullOrWhiteSpace(_connectionString))
             throw new InvalidOperationException("Database connection string is missing.");
 
+        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+
         return GetDbType() switch
         {
             DbType.MsSql => new SqlConnection(_connectionString),
