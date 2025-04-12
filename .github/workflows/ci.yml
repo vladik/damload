@@ -27,5 +27,5 @@ jobs:
     - name: Build solution
       run: dotnet build src/DamLoad.sln --no-restore --configuration Release
 
-    #- name: Run tests
-    #  run: dotnet test tests/DamLoad.Classify.Tests/DamLoad.Classify.Tests.csproj --no-build --configuration Release --verbosity normal
+    - name: Run tests
+      run: dotnet test src/DamLoad.sln --no-build --configuration Release --verbosity normal
