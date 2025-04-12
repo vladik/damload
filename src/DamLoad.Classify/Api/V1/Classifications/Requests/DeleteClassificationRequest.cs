@@ -1,7 +1,7 @@
-﻿namespace DamLoad.Classify.Api.V1.Classifications.Requests
+namespace DamLoad.Classify.Api.V1.Classifications.Requests;
+
+public class DeleteClassificationRequest
 {
-    public class DeleteClassificationRequest
-    {
-        public Guid Id { get; set; }
-    }
+    public string ResourceId { get; set; } = default!;
+    public List<Guid> ClassifierIds { get; set; } = new();
 }

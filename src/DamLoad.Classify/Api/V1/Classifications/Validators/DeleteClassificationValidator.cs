@@ -4,9 +4,9 @@ using FluentValidation;
 
 namespace DamLoad.Classify.Api.V1.Classifications.Validators;
 
-public class CreateClassificationValidator : Validator<CreateClassificationRequest>
+public class DeleteClassificationValidator : Validator<DeleteClassificationRequest>
 {
-    public CreateClassificationValidator()
+    public DeleteClassificationValidator()
     {
         RuleFor(x => x.ResourceId).NotEmpty();
         RuleFor(x => x.ClassifierIds).NotEmpty();

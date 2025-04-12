@@ -12,11 +12,9 @@ namespace DamLoad.Classify
             services.AddScoped<ISchemeRepository, SchemeRepository>();
             services.AddScoped<IClassifierRepository, ClassifierRepository>();
             services.AddScoped<IClassificationRepository, ClassificationRepository>();
-            services.AddScoped<IHierarchyRepository, HierarchyRepository>();
             services.AddScoped<ISchemeService, SchemeService>();
             services.AddScoped<IClassifierService, ClassifierService>();
             services.AddScoped<IClassificationService, ClassificationService>();
-            services.AddScoped<IHierarchyService, HierarchyService>();
         }
     }
 }
