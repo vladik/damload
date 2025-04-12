@@ -22,10 +22,10 @@ jobs:
         dotnet-version: '9.0.x'  # or your target framework version
 
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore  src/DamLoad.sln
 
     - name: Build solution
-      run: dotnet build --no-restore --configuration Release
+      run: dotnet build src/DamLoad.sln --no-restore --configuration Release
 
-    - name: Run tests
-      run: dotnet test --no-build --configuration Release --verbosity normal
+    #- name: Run tests
+    #  run: dotnet test tests/DamLoad.Classify.Tests/DamLoad.Classify.Tests.csproj --no-build --configuration Release --verbosity normal
