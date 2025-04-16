@@ -8,18 +8,23 @@ public static class GetAssetMapper
     public static AssetModel ToModel(this AssetEntity e) => new()
     {
         Id = e.Id,
+        VariantOfId = e.VariantOfId,
         PublicId = e.PublicId,
         Url = e.Url,
         Bytes = e.Bytes,
         Type = e.Type,
         Status = e.Status,
         ContentType = e.ContentType,
-        Extension = e.Extension
+        Extension = e.Extension,
+        CreatedAt = e.CreatedAt,
+        UpdatedAt = e.UpdatedAt,
+        DeletedAt = e.DeletedAt
     };
 
     public static AssetEntity ToEntity(this AssetModel m) => new()
     {
         Id = m.Id,
+        VariantOfId = m.VariantOfId,
         PublicId = m.PublicId,
         Url = m.Url,
         Bytes = m.Bytes,
@@ -27,9 +32,8 @@ public static class GetAssetMapper
         Status = m.Status,
         ContentType = m.ContentType,
         Extension = m.Extension,
-        CreatedAt = DateTime.UtcNow,
-        UpdatedAt = DateTime.UtcNow
+        CreatedAt = m.CreatedAt,
+        UpdatedAt = m.UpdatedAt,
+        DeletedAt = m.DeletedAt
     };
-    
-    
 }

@@ -3,22 +3,22 @@ using DamLoad.Assets.Repositories;
 
 namespace DamLoad.Assets.Services
 {
-    public class AssetMetadataService : IAssetMetadataService
+    public class AssetMetaService : IAssetMetaService
     {
-        private readonly IAssetMetadataRepository _repository;
+        private readonly IAssetMetaRepository _repository;
 
-        public AssetMetadataService(IAssetMetadataRepository repository)
+        public AssetMetaService(IAssetMetaRepository repository)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        public async Task<List<AssetMetadataEntity>> GetByAssetIdAsync(Guid assetId) =>
+        public async Task<List<AssetMetaEntity>> GetByAssetIdAsync(Guid assetId) =>
             await _repository.GetByAssetIdAsync(assetId);
 
-        public async Task AddAsync(AssetMetadataEntity metadata) =>
-            await _repository.AddAsync(metadata);
+        public async Task AddAsync(AssetMetaEntity meta) =>
+            await _repository.AddAsync(meta);
 
-        public async Task AddBatchAsync(List<AssetMetadataEntity> metadataList)
+        public async Task AddBatchAsync(List<AssetMetaEntity> metadataList)
         {
             if (metadataList == null || metadataList.Count == 0) return;
             await _repository.AddBatchAsync(metadataList);

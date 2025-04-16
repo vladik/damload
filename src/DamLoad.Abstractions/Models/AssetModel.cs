@@ -5,6 +5,7 @@ namespace DamLoad.Abstractions.Models
     public class AssetModel
     {
         public Guid Id { get; set; }
+        public Guid? VariantOfId { get; set; }
         public string PublicId { get; set; } = null!;
         public string Url { get; set; } = null!;
         public string PublicUrl { get; set; } = null!;
@@ -14,5 +15,7 @@ namespace DamLoad.Abstractions.Models
         public string Extension { get; set; } = null!;
         public string Status { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
     }
 }

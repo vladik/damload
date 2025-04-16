@@ -5,39 +5,39 @@ using System.Data;
 
 namespace DamLoad.Assets.Repositories
 {
-    public class AssetMetadataRepository : IAssetMetadataRepository
+    public class AssetMetaRepository : IAssetMetaRepository
     {
         private readonly DatabaseFactory _databaseFactory;
 
-        public AssetMetadataRepository(DatabaseFactory databaseFactory)
+        public AssetMetaRepository(DatabaseFactory databaseFactory)
         {
             _databaseFactory = databaseFactory;
         }
 
         private IDbConnection GetConnection() => _databaseFactory.CreateConnection();
 
-        public async Task<List<AssetMetadataEntity>> GetByAssetIdAsync(Guid assetId)
+        public async Task<List<AssetMetaEntity>> GetByAssetIdAsync(Guid assetId)
         {
             using var db = GetConnection();
             string sql = "SELECT id FROM asset_metadata WHERE asset_id = @AssetId WHERE asset_id = @AssetId";
-            return (await db.QueryAsync<AssetMetadataEntity>(sql, new { AssetId = assetId })).ToList();
+            return (await db.QueryAsync<AssetMetaEntity>(sql, new { AssetId = assetId })).ToList();
         }
 
-        public async Task<List<AssetMetadataEntity>> GetByAssetIdAndLocaleAsync(Guid assetId, string locale)
+        public async Task<List<AssetMetaEntity>> GetByAssetIdAndLocaleAsync(Guid assetId, string locale)
         {
             using var db = GetConnection();
             string sql = "SELECT * FROM asset_metadata WHERE asset_id = @AssetId AND locale = @Locale";
-            return (await db.QueryAsync<AssetMetadataEntity>(sql, new { AssetId = assetId, Locale = locale })).AsList();
+            return (await db.QueryAsync<AssetMetaEntity>(sql, new { AssetId = assetId, Locale = locale })).AsList();
         }
 
-        public async Task AddAsync(AssetMetadataEntity metadata)
+        public async Task AddAsync(AssetMetaEntity meta)
         {
             using var db = GetConnection();
             string sql = "INSERT INTO asset_metadata (id, asset_id, data_key, data_value) VALUES (@Id, @AssetId, @DataKey, @DataValue)";
-            await db.ExecuteAsync(sql, metadata);
+            await db.ExecuteAsync(sql, meta);
         }
 
-        public async Task AddBatchAsync(List<AssetMetadataEntity> metadataList)
+        public async Task AddBatchAsync(List<AssetMetaEntity> metadataList)
         {
             if (metadataList == null || !metadataList.Any()) return; 
 

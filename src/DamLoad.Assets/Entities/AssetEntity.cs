@@ -14,11 +14,9 @@ namespace DamLoad.Assets.Entities
         public string ContentType { get; set; } = null!;
         public string Extension { get; set; } = null!;
         public long Bytes { get; set; }
-        public string Status { get; set; } = default!;
+        public string Status { get; set; } = null!;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? DeletedAt { get; set; }
-        public DateTime? PublishedAt { get; set; }
-        public DateTime? ExpiresAt { get; set; }
     }
 }
